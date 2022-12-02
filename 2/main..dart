@@ -8,34 +8,34 @@ void main(List<String> args) async {
   final lines = input.split('\n');
   print('lines: ${lines.length}');
 
-  final offset = 'X'.codeUnits.first - 'A'.codeUnits.first;
+  final diffOffset = 'X'.codeUnits.first - 'A'.codeUnits.first;
+  final xOffset = 'X'.codeUnits.first;
+
+  int calculateOutcomeScore(String oMove, String yMove) {
+    int oMoveCode = oMove.codeUnits.first;
+    int yMoveCode = yMove.codeUnits.first;
+
+    int moveScore = yMoveCode - xOffset + 1;
+
+    int result = (oMoveCode - (yMoveCode - diffOffset) + 3) % 3;
+    int resultScore;
+    if (result == 0) {
+      resultScore = 3;
+    } else if (result == 1) {
+      resultScore = 0;
+    } else {
+      resultScore = 6;
+    }
+
+    return moveScore + resultScore;
+  }
 
   // Part 1
   final scores = lines.map((l) {
     final oMove = l[0];
     final yMove = l[2];
 
-    int moveScore;
-    if (yMove == 'X') {
-      moveScore = 1;
-    } else if (yMove == 'Y') {
-      moveScore = 2;
-    } else if (yMove == 'Z') {
-      moveScore = 3;
-    } else {
-      throw 'Move not allowed $yMove';
-    }
-
-    int resultScore;
-    if (oMove == 'A' && yMove == 'Y' || oMove == 'B' && yMove == 'Z' || oMove == 'C' && yMove == 'X') {
-      resultScore = 6;
-    } else if (yMove.codeUnits.first == oMove.codeUnits.first + offset) {
-      resultScore = 3;
-    } else {
-      resultScore = 0;
-    }
-
-    return moveScore + resultScore;
+    return calculateOutcomeScore(oMove, yMove);
   });
 
   print(scores.fold<int>(0, (acc, score) => acc + score)); // 11150
@@ -55,7 +55,7 @@ void main(List<String> args) async {
         yMove = 'Y';
       }
     } else if (eOutcome == 'Y') {
-      yMove = String.fromCharCode(oMove.codeUnits.first + offset);
+      yMove = String.fromCharCode(oMove.codeUnits.first + diffOffset);
     } else {
       if (oMove == 'A') {
         yMove = 'Y';
@@ -66,27 +66,7 @@ void main(List<String> args) async {
       }
     }
 
-    int moveScore;
-    if (yMove == 'X') {
-      moveScore = 1;
-    } else if (yMove == 'Y') {
-      moveScore = 2;
-    } else if (yMove == 'Z') {
-      moveScore = 3;
-    } else {
-      throw 'Move not allowed $yMove';
-    }
-
-    int resultScore;
-    if (oMove == 'A' && yMove == 'Y' || oMove == 'B' && yMove == 'Z' || oMove == 'C' && yMove == 'X') {
-      resultScore = 6;
-    } else if (yMove.codeUnits.first == oMove.codeUnits.first + offset) {
-      resultScore = 3;
-    } else {
-      resultScore = 0;
-    }
-
-    return moveScore + resultScore;
+    return calculateOutcomeScore(oMove, yMove);
   });
 
   print(scores2.fold<int>(0, (acc, score) => acc + score)); // 8295
