@@ -8,9 +8,6 @@ void main(List<String> args) async {
   final lines = input.split('\n');
   print('lines: ${lines.length}');
 
-  final aOffset = 'a'.codeUnits.first;
-  final AOffset = 'A'.codeUnits.first;
-
   // Part 1
   final scores = lines.map((l) {
     final halfLength = l.length ~/ 2;
@@ -19,15 +16,12 @@ void main(List<String> args) async {
 
     final commonLetter = first.codeUnits.firstWhere((f) => second.codeUnits.contains(f));
 
-    if (commonLetter <= 'Z'.codeUnits.first) {
-      return commonLetter - AOffset + 27;
-    } else {
-      return commonLetter - aOffset + 1;
-    }
+    return getLetterPrio(commonLetter);
   });
 
   print(scores.fold<int>(0, (acc, score) => acc + score)); // 7737
 
+  // Part 2
   var sum = 0;
   for (var i = 0; i < lines.length ~/ 3; i++) {
 
@@ -37,16 +31,21 @@ void main(List<String> args) async {
 
     final commonLetter = a.firstWhere((aChar) => b.contains(aChar) && c.contains(aChar));
 
-    int prio;
-    if (commonLetter <= 'Z'.codeUnits.first) {
-      prio = commonLetter - AOffset + 27;
-    } else {
-      prio = commonLetter - aOffset + 1;
-    }
-
-    sum += prio;
+    sum += getLetterPrio(commonLetter);
   }
 
   print(sum); // 2697
   
+}
+
+
+final aOffset = 'a'.codeUnits.first;
+final AOffset = 'A'.codeUnits.first;
+
+int getLetterPrio(int codeUnit) {
+  if (codeUnit <= 'Z'.codeUnits.first) {
+      return codeUnit - AOffset + 27;
+    } else {
+      return codeUnit - aOffset + 1;
+    }
 }
