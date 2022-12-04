@@ -2,7 +2,7 @@ import 'dart:io';
 
 const filename = 'input.txt';
 void main(List<String> args) async {
-  final file = File(filename);
+  final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
   final input = await file.readAsString();
 
   final lines = input.split('\n');

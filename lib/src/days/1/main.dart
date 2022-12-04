@@ -3,7 +3,7 @@ import 'dart:math';
 
 const filename = 'input.txt';
 void main(List<String> args) async {
-  final file = File(filename);
+  final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
   final lines = await file.readAsString();
   print('lines: ${lines.length}');
 
