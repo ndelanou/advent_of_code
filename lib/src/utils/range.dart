@@ -9,7 +9,7 @@ class Range {
   }
 
   bool contains(Range other) {
-    return other.lower >= lower && other.lower <= upper && other.upper >= lower && other.upper <= upper;
+    return other.lower >= lower && other.upper <= upper;
   }
 
   bool overlapWith(Range other) {
