@@ -53,6 +53,6 @@ void main(List<String> args) async {
     applyInstruction(i);
   });
 
-  print(stacks.map((e) => e.last).join());
+  print(stacks.map((e) => e.last).join()); // QMBMJDFTD || NBTVTJNFJ
   
 }
