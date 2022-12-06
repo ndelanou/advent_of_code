@@ -22,10 +22,14 @@ int findMessageKeyIndex(String input, int keyLength) {
 }
 
 bool isMessageKey(String input) {
-  for (var j = 0; j < input.length; j++) {
-    final char = input[j];
-    if (input.indexOf(char) != input.lastIndexOf(char)) return false;
-  }
+  // // V1
+  // for (var j = 0; j < input.length; j++) {
+  //   final char = input[j];
+  //   if (input.indexOf(char) != input.lastIndexOf(char)) return false;
+  // }
 
-  return true;
+  // return true;
+
+  // V2 : inspired from https://github.com/darrenaustin/advent-of-code-dart/blob/main/lib/src/2022/day06.dart
+  return input.codeUnits.toSet().length == input.length;
 }
