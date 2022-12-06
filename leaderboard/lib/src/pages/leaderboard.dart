@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leaderboard/src/provider/leaderboard.dart';
@@ -14,15 +15,47 @@ class LeaderboardPage extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: dataState.when(
-          data: (data) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              child: Text(data.toString()),
+          data: (leaderboard) {
+            // ignore: unnecessary_cast
+            final sortedMembers = leaderboard.members.sortedBy((m) => -m.localScore as num);
+
+            return SingleChildScrollView(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Table(
+                    columnWidths: const {
+                      0: IntrinsicColumnWidth(),
+                      1: IntrinsicColumnWidth(),
+                      2: IntrinsicColumnWidth(),
+                    },
+                    border: TableBorder.all(),
+                    children: sortedMembers.mapIndexed((index, member) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Center(child: Text('${index + 1}')),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Text(member.name),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Center(child: Text('${member.localScore}')),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
             );
           },
           error: (error, stackTrace) {
             log('Error loading data', error: error, stackTrace: stackTrace);
-            print(stackTrace);
 
             return Center(
               child: Card(
