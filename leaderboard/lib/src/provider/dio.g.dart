@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'leaderboard.dart';
+part of 'dio.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,14 +29,23 @@ class _SystemHash {
   }
 }
 
-String $leaderboardDataHash() => r'1ac59ccab364d4871b1443ef3f9c6c5e0a270a6b';
+String $dioClientHash() => r'3121267c8bf7e5bdeda4e684a967a4b4ced73b55';
 
-/// See also [leaderboardData].
-final leaderboardDataProvider = FutureProvider<Leaderboard>(
-  leaderboardData,
-  name: r'leaderboardDataProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : $leaderboardDataHash,
+/// See also [dioClient].
+final dioClientProvider = Provider<Dio>(
+  dioClient,
+  name: r'dioClientProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : $dioClientHash,
 );
-typedef LeaderboardDataRef = FutureProviderRef<Leaderboard>;
+typedef DioClientRef = ProviderRef<Dio>;
+String $baseUrlHash() => r'ebaec11ea65764de5caf27e5aa815085c6b11665';
+
+/// See also [baseUrl].
+final baseUrlProvider = Provider<String>(
+  baseUrl,
+  name: r'baseUrlProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : $baseUrlHash,
+);
+typedef BaseUrlRef = ProviderRef<String>;
