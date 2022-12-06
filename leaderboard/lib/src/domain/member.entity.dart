@@ -10,7 +10,7 @@ part 'member.entity.g.dart';
 class Member with _$Member {
   const factory Member({
     required int id,
-    required String name,
+    @JsonKey(defaultValue: '') required String name,
     required int stars,
     @JsonKey(name: 'last_star_ts') required int lastStarTs,
     @JsonKey(name: 'global_score') required int globalScore,

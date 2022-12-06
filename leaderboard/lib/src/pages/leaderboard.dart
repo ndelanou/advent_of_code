@@ -13,6 +13,13 @@ class LeaderboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(leaderboardDataProvider, (previous, next) {
+      if (next.hasError) {
+        final errorState = next.asError!;
+        dev.log('Error loading data', error: errorState.error, stackTrace: errorState.stackTrace);
+        print(errorState.stackTrace);
+      }
+    });
     final dataState = ref.watch(leaderboardDataProvider);
 
     return Scaffold(
@@ -84,18 +91,17 @@ class LeaderboardPage extends ConsumerWidget {
               ),
             );
           },
-          error: (error, stackTrace) {
-            dev.log('Error loading data', error: error, stackTrace: stackTrace);
-
-            return Center(
-              child: Card(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          error: (error, __) => Center(
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('Error', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      Text(error.toString()),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => ref.refresh(leaderboardDataProvider),
@@ -105,8 +111,8 @@ class LeaderboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
           loading: () => const Center(child: CircularProgressIndicator.adaptive()),
         ),
       ),

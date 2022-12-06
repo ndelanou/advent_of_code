@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:leaderboard/src/core/types.dart';
 import 'package:leaderboard/src/domain/leaderboard.entity.dart';
@@ -12,13 +8,7 @@ part 'leaderboard.g.dart';
 
 @Riverpod(keepAlive: true)
 Future<Leaderboard> leaderboardData(LeaderboardDataRef ref) async {
-  return Leaderboard.fromJson(kDebugMode ? await _readJson() : await _getFromWeb(ref));
-}
-
-Future<JsonObject> _readJson() async {
-  final response = await rootBundle.loadString('assets/leaderboard_data.json');
-  final data = await json.decode(response);
-  return data as JsonObject;
+  return Leaderboard.fromJson(await _getFromWeb(ref));
 }
 
 Future<JsonObject> _getFromWeb(Ref ref) async {
