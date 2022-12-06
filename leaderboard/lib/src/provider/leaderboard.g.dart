@@ -29,14 +29,14 @@ class _SystemHash {
   }
 }
 
-String $leaderboardDataHash() => r'4332038b646c283c3cc562ce968b16c2d4351d35';
+String $leaderboardDataHash() => r'ac36ce26dfd673ed7c6d0edc61836b57bd9b88c5';
 
 /// See also [leaderboardData].
-final leaderboardDataProvider = AutoDisposeFutureProvider<Map<String, dynamic>>(
+final leaderboardDataProvider = AutoDisposeFutureProvider<Leaderboard>(
   leaderboardData,
   name: r'leaderboardDataProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : $leaderboardDataHash,
 );
-typedef LeaderboardDataRef = AutoDisposeFutureProviderRef<Map<String, dynamic>>;
+typedef LeaderboardDataRef = AutoDisposeFutureProviderRef<Leaderboard>;
