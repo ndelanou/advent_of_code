@@ -37,3 +37,12 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Generated Dart files
+**/*.g.dart
+**/*.freezed.dart
+**/*.gen.dart
+**/*.gr.dart
+
+**/gen
+**/generated
