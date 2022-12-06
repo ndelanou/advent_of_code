@@ -1,4 +1,7 @@
-import 'dart:developer';
+// ignore_for_file: unnecessary_cast
+
+import 'dart:developer' as dev;
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +19,14 @@ class LeaderboardPage extends ConsumerWidget {
       body: SafeArea(
         child: dataState.when(
           data: (leaderboard) {
-            // ignore: unnecessary_cast
+            final maxDay = leaderboard.members.map((e) => e.completionDayLevel.keys.lastOrNull ?? 0).reduce(max);
             final sortedMembers = leaderboard.members.sortedBy((m) => -m.localScore as num);
+            final dayMemberRank = Map.fromEntries(
+              List.generate(maxDay, (index) => index + 1).map((day) {
+                final sortedRanks = sortedMembers.where((m) => m.completionDayLevel[day] != null).sortedBy((m) => (m.completionDayLevel[day]?[2]?.getStarTs ?? double.infinity) as num);
+                return MapEntry(day, sortedRanks);
+              }),
+            );
 
             return SingleChildScrollView(
               child: Align(
@@ -25,37 +34,58 @@ class LeaderboardPage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Table(
-                    columnWidths: const {
-                      0: IntrinsicColumnWidth(),
-                      1: IntrinsicColumnWidth(),
-                      2: IntrinsicColumnWidth(),
+                    columnWidths: {
+                      0: const IntrinsicColumnWidth(),
+                      1: const IntrinsicColumnWidth(),
+                      2: const IntrinsicColumnWidth(),
+                      ...Map.fromEntries(dayMemberRank.keys.map((day) => MapEntry(day + 2, const IntrinsicColumnWidth()))),
                     },
                     border: TableBorder.all(),
-                    children: sortedMembers.mapIndexed((index, member) {
-                      return TableRow(
+                    children: [
+                      TableRow(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Center(child: Text('${index + 1}')),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Text(member.name),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Center(child: Text('${member.localScore}')),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                          const Text('N°'),
+                          const Text('Name'),
+                          const Text('Score'),
+                          ...dayMemberRank.keys.map((day) => Text('$day')),
+                        ]
+                            .map(
+                              (e) => Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: Center(child: e),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                      ...sortedMembers.mapIndexed((index, member) {
+                        return TableRow(
+                          children: [
+                            Center(child: Text('${index + 1}')),
+                            Text(member.name),
+                            Center(child: Text('${member.localScore}')),
+                            ...dayMemberRank.keys.map((day) {
+                              final index = dayMemberRank[day]!.indexWhere((m) => m.id == member.id);
+                              final label = index == -1 ? '' : (index + 1).toString();
+                              return Center(child: Text(label, style: (index == 0) ? const TextStyle(fontWeight: FontWeight.bold) : null));
+                            })
+                          ]
+                              .map(
+                                (e) => Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Center(child: e),
+                                ),
+                              )
+                              .toList(),
+                        );
+                      })
+                    ],
                   ),
                 ),
               ),
             );
           },
           error: (error, stackTrace) {
-            log('Error loading data', error: error, stackTrace: stackTrace);
+            dev.log('Error loading data', error: error, stackTrace: stackTrace);
 
             return Center(
               child: Card(
