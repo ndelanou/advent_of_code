@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+
 const filename = 'input.txt';
 void main() async {
   final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
@@ -52,9 +54,7 @@ void main() async {
   int getDirSize(String path) {
     final regExp = RegExp('\/');
     final subs = sizeMap.keys.where((k) => k.startsWith(path) && (regExp.allMatches(path).length == (regExp.allMatches(k).length - 1)));
-    print(path);
-    print(subs);
-    print('=====');
+
     if (subs.length == 0) {
       totalSizeMap[path] = sizeMap[path] ?? 0;
     } else {
@@ -64,17 +64,23 @@ void main() async {
     return totalSizeMap[path]!;
   }
 
-  final total = getDirSize('/');
-
-  print(total);
-  print(totalSizeMap['/']);
+  final usedSpace = getDirSize('/');
 
   int sumUnder100k = 0;
   totalSizeMap.forEach((key, value) {
     if (value <= 100000) sumUnder100k += value;
   });
 
-  print(sumUnder100k); // 1992920704, 1659984, 1149061, 1360669, 1756112,
+  print(sumUnder100k); // 1667443
+
+  // Part 2
+
+  final totalSpace = 70000000;
+  final availableSpace = totalSpace - usedSpace;
+  final neededSpace = 30000000 - availableSpace;
+  
+  final p2 = totalSizeMap.values.where((element) => element > neededSpace).toList().sortedBy((element) => element as num);
+  print(p2); // 8998590
   
 }
   
