@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 
 const filename = 'input.txt';
+
 void main() async {
   final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
   final input = await file.readAsString();
@@ -10,12 +11,11 @@ void main() async {
   final lines = input.split('\n');
   print('lines: ${lines.length}');
 
-  final sizeMap = <String, int>{};
+  final filesSizeMap = <String, int>{};
 
   String currentPath = '/';
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
-    // print(line);
 
     if (line.startsWith('\$ ')){
       final cmd = line.substring(2);
@@ -31,35 +31,24 @@ void main() async {
       } else {
         currentPath = currentPath + cd + '/';
       }
-      
     } else {
       final splits = line.split(' ');
       if (splits[0] != 'dir') {
-        sizeMap[currentPath] = (sizeMap[currentPath] ?? 0) + int.parse(splits[0]);
+        filesSizeMap[currentPath] = (filesSizeMap[currentPath] ?? 0) + int.parse(splits[0]);
       } else {
-        if (!sizeMap.containsKey(currentPath)) {
-          sizeMap[currentPath] = 0;
-        }
-      }
-      
+        filesSizeMap[currentPath] ??= 0;
+      } 
     }
   }
-
-  print(lines.where((element) => element.startsWith('dir ')).length);
-  print(sizeMap.length);
-
 
   final totalSizeMap = <String, int>{};
 
   int getDirSize(String path) {
-    final regExp = RegExp('\/');
-    final subs = sizeMap.keys.where((k) => k.startsWith(path) && (regExp.allMatches(path).length == (regExp.allMatches(k).length - 1)));
-
+    final subs = filesSizeMap.keys.where((k) => k.startsWith(path) && (path.split('/').length == k.split('/').length - 1));
     if (subs.length == 0) {
-      totalSizeMap[path] = sizeMap[path] ?? 0;
+      totalSizeMap[path] = filesSizeMap[path]!;
     } else {
-      // print('$path $subs');
-      totalSizeMap[path] = subs.fold(0, (acc, element) => acc += getDirSize(element)) + (sizeMap[path] ?? 0);
+      totalSizeMap[path] = subs.fold(0, (acc, element) => acc += getDirSize(element)) + (filesSizeMap[path] ?? 0);
     }
     return totalSizeMap[path]!;
   }
@@ -74,14 +63,11 @@ void main() async {
   print(sumUnder100k); // 1667443
 
   // Part 2
-
   final totalSpace = 70000000;
   final availableSpace = totalSpace - usedSpace;
   final neededSpace = 30000000 - availableSpace;
   
-  final p2 = totalSizeMap.values.where((element) => element > neededSpace).toList().sortedBy((element) => element as num);
-  print(p2); // 8998590
-  
-}
-  
+  final minFileSize = totalSizeMap.values.where((element) => element > neededSpace).toList().min;
+  print(minFileSize); // 8998590
 
+}
