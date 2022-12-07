@@ -7,11 +7,6 @@ environment:
 
 dependencies:
   collection: ^1.16.0
-  flutter:
-    sdk: flutter
 
 dev_dependencies:
   lints: ^2.0.0
-
-flutter:
-  uses-material-design: true
