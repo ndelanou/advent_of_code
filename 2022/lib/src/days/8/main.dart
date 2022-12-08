@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:collection/collection.dart';
-
 const filename = 'input.txt';
 
 void main() async {
@@ -14,90 +12,13 @@ void main() async {
 
   final trees = lines.map((l) => l.split('').map((s) => int.parse(s)).toList()).toList();
 
-  // Part 1 - 1
+  // Part 1
   int sum = 0;
-
-  final List<Pair> seenTrees = [];
-
-  int max;
-
-  for (var i = 0; i < trees.length; i++) {
-    final y = i;
-    
-    max = -1;
-    for (var j = 0; j < trees[i].length; j++) {
-
-      final x = j;
-
-      final tree = trees[x][y];
-      if (tree > max) {
-        if (!seenTrees.contains(Pair(x,y))) {
-          sum++;
-          seenTrees.add(Pair(x,y));
-        }
-        max = tree;
-      } 
-    }
-
-    max = -1;
-    for (var j = 0; j < trees[i].length; j++) {
-
-      final x = trees[i].length - 1 - j;
-
-      final tree = trees[x][y];
-      if (tree > max) {
-        if (!seenTrees.contains(Pair(x,y))) {
-          sum++;
-          seenTrees.add(Pair(x,y));
-        }
-        max = tree;
-      }
-    }
-
-  }
-
-  for (var i = 0; i < trees.first.length; i++) {
-    final x = i;
-    
-    max = -1;
-    for (var j = 0; j < trees[i].length; j++) {
-
-      final y = j;
-
-      final tree = trees[x][y];
-      if (tree > max) {
-        if (!seenTrees.contains(Pair(x,y))) {
-          sum++;
-          seenTrees.add(Pair(x,y));
-        }
-        max = tree;
-      }
-    }
-
-    max = -1;
-    for (var j = 0; j < trees[i].length; j++) {
-
-      final y = trees.length - 1 - j;
-
-      final tree = trees[x][y];
-      if (tree > max) {
-        if (!seenTrees.contains(Pair(x,y))) {
-          sum++;
-          seenTrees.add(Pair(x,y));
-        }
-        max = tree;
-      }
-    }
-
-  }
-
-  // Part 1 - 2
-  int sum2 = 0;
   for (var i = 0; i < trees.length; i++) {
     for (var j = 0; j < trees[i].length; j++) {
       final tree = trees[i][j];
       if (i == 0 || i == trees.length - 1 || j == 0 || j == trees[i].length - 1) {
-        sum2++;
+        sum++;
         continue;
       }
       final clearL = trees[i].sublist(0,j).every((s) => tree > s);
@@ -107,13 +28,12 @@ void main() async {
       final clearB = trees.map((r) => r[j]).toList().sublist(i+1, trees.length).every((s) => tree > s);
       
       if (clearL || clearR || clearT || clearB) {
-        sum2++;
+        sum++;
       }
     } 
   }
 
   print(sum); // 1854
-  print(sum2); // 1854
 
   // Part 2
   int maxScore = 0;
@@ -161,5 +81,8 @@ class Pair {
   final int y;
 
   @override
-  bool operator ==(other) => (other as Pair).x == x && (other as Pair).y == y;
+  bool operator ==(other) {
+    if (other is! Pair) return false;
+    return other.x == x && (other).y == y;
+  }
 }
