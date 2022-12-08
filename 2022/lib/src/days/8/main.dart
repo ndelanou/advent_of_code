@@ -35,9 +35,7 @@ void main() async {
           seenTrees.add(Pair(x,y));
         }
         max = tree;
-      } else {
-        break;
-      }
+      } 
     }
 
     max = -1;
@@ -52,8 +50,6 @@ void main() async {
           seenTrees.add(Pair(x,y));
         }
         max = tree;
-      } else {
-        break;
       }
     }
 
@@ -74,8 +70,6 @@ void main() async {
           seenTrees.add(Pair(x,y));
         }
         max = tree;
-      } else {
-        break;
       }
     }
 
@@ -91,8 +85,6 @@ void main() async {
           seenTrees.add(Pair(x,y));
         }
         max = tree;
-      } else {
-        break;
       }
     }
 
