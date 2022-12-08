@@ -1,4 +1,4 @@
-import 'package:advent_of_code/src/2022/day08.dart';
+import 'package:advent_of_code/src/2022/2022.dart';
 import 'package:advent_of_code/src/utils/generic_day.dart';
 
 

@@ -1,6 +1,6 @@
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:advent_of_code/src/utils/generic_day.dart';
+import '../utils/utils.dart';
 
 class Day08 extends GenericDay {
   Day08() : super(2022, 8);
@@ -76,10 +76,10 @@ class Day08 extends GenericDay {
             safeFromZero(topScore) *
             safeFromZero(bottomScore);
 
-        maxScore = math.max(maxScore, score);
+        maxScore = max(maxScore, score);
       }
     }
-     maxScore;
+    return maxScore;
   }
 
   nbUnderSize(List<int> list, int size) {
@@ -98,15 +98,3 @@ class Day08 extends GenericDay {
   }
 }
 
-class Pair {
-  const Pair(this.x, this.y);
-
-  final int x;
-  final int y;
-
-  @override
-  bool operator ==(other) {
-    if (other is! Pair) return false;
-    return other.x == x && (other).y == y;
-  }
-}

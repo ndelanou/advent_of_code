@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:collection/collection.dart';
 
+import '../utils/utils.dart';
+
 const filename = 'input.txt';
 
 void main(List<String> args) async {
@@ -28,35 +30,4 @@ int getOverlapingLines(Iterable<Segment> segments, {int overlapThreshold = 2}) {
   final linePoints = segments.expand((segment) => segment.points);
   final overlapsPerPoints = linePoints.groupListsBy((element) => element);
   return overlapsPerPoints.values.where((c) => c.length >= overlapThreshold).length;
-}
-
-class Segment {
-  Segment(this.start, this.end);
-
-  final Point start;
-  final Point end;
-
-  Iterable<Point> get points {
-    final xDiff = start.x - end.x;
-    final yDiff = start.y - end.y;
-    final maxDiff = max(xDiff.abs(), yDiff.abs());
-
-    final iterationRange = range(0, maxDiff);
-    return iterationRange.map((i) {
-      return Point(
-        start.x + (-xDiff * i / maxDiff).round(),
-        start.y + (-yDiff * i / maxDiff).round(),
-      );
-    });
-  }
-
-  @override
-  String toString() {
-    return '(${start.x},${start.y})-(${end.x},${end.y})';
-  }
-}
-
-List<num> range(num from, num to) {
-  int inc = from < to ? 1 : -1;
-  return [for(var i=from; i!=(to + inc); i += inc) i];
 }
