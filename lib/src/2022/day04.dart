@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../../utils/range.dart';
+import '../utils/range.dart';
 
 const filename = 'input.txt';
 void main(List<String> args) async {

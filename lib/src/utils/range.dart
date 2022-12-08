@@ -1,7 +1,7 @@
 class Range {
-  final num lower, upper;
+  final num from, to;
 
-  const Range(this.lower, this.upper) : assert(lower <= upper);
+  const Range(this.from, this.to) : assert(from <= to);
 
   factory Range.fromList(Iterable<num> list) {
     assert(list.length == 2, 'List length must be equal to 2');
@@ -9,14 +9,14 @@ class Range {
   }
 
   bool contains(Range other) {
-    return other.lower >= lower && other.upper <= upper;
+    return other.from >= from && other.to <= to;
   }
 
   bool overlapWith(Range other) {
-    return !(upper < other.lower || lower > other.upper);
+    return !(to < other.from || from > other.to);
   }
 
   Range copyWith({num? lower, num? upper}) {
-    return Range(lower ?? this.lower, upper ?? this.upper);
+    return Range(lower ?? this.from, upper ?? this.to);
   }
 }

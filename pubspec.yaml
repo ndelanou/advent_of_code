@@ -1,5 +1,5 @@
-name: advent_2022
-description: advent 2022
+name: advent_of_code
+description: Advent of Code
 version: 1.0.0
 
 environment:
@@ -7,6 +7,7 @@ environment:
 
 dependencies:
   collection: ^1.16.0
+  tuple: ^2.0.1
 
 dev_dependencies:
   lints: ^2.0.0
