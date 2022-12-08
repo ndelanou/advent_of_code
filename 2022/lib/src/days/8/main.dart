@@ -14,6 +14,7 @@ void main() async {
 
   final trees = lines.map((l) => l.split('').map((s) => int.parse(s)).toList()).toList();
 
+  // Part 1 - 1
   int sum = 0;
 
   final List<Pair> seenTrees = [];
@@ -90,6 +91,7 @@ void main() async {
 
   }
 
+  // Part 1 - 2
   int sum2 = 0;
   for (var i = 0; i < trees.length; i++) {
     for (var j = 0; j < trees[i].length; j++) {
@@ -110,6 +112,10 @@ void main() async {
     } 
   }
 
+  print(sum); // 1854
+  print(sum2); // 1854
+
+  // Part 2
   int maxScore = 0;
   for (var i = 0; i < trees.length; i++) {
     for (var j = 0; j < trees[i].length; j++) {
@@ -125,20 +131,13 @@ void main() async {
       int topScore = nbUnderSize(top, tree);
       int bottomScore = nbUnderSize(bottom, tree);
 
-      // if (i == 29 && j == 45) {
-      //   print('$leftScore, $rightScore, $topScore, $bottomScore');
-      //   print(left);
-      // }
-
       int score = safeFromZero(leftScore) * safeFromZero(rightScore) * safeFromZero(topScore) * safeFromZero(bottomScore);
 
       maxScore = math.max(maxScore, score);
     } 
   }
 
-  print(sum); // 889, 435, 645, 604, 598
-  print(sum2); // 2119
-  print(maxScore); // 110946-, 255507-, 479400-
+  print(maxScore); // 527340
 
 }
 
