@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:leaderboard/src/pages/leaderboard.dart';
+import 'package:leaderboard/src/pages/leaderboard/leaderboard.dart';
 import 'package:leaderboard/src/provider/dio.dart';
 
 class ALApp extends StatelessWidget {
