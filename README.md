@@ -4,5 +4,5 @@ Big thanks to [@ericwastl](https://twitter.com/ericwastl) for crafting this amaz
 
 ## Credits
 
-<https://github.com/S-ecki/AdventOfCode-Starter-Dart> for the Starter Kit
+<https://github.com/S-ecki/AdventOfCode-Starter-Dart> for the Starter Kit  
 <https://github.com/darrenaustin/advent-of-code-dart> for inspiration
