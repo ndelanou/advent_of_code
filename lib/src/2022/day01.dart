@@ -1,28 +1,35 @@
-import 'dart:io';
 import 'dart:math';
 
-const filename = 'input.txt';
-void main(List<String> args) async {
-  final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
-  final lines = await file.readAsString();
-  print('lines: ${lines.length}');
+import 'package:advent_of_code/src/utils/utils.dart';
 
-  final elfs = lines.split('\n\n');
-  print('elfs: ${elfs.length}');
+class Day01 extends GenericDay {
+  Day01() : super(2022, 1);
 
-  final elfsCals = elfs.map(
-    (e) => e
-        .split('\n')
-        .map((calStr) => int.parse(calStr))
-        .fold(0, (acc, cal) => acc + cal),
-  );
+  @override
+  Iterable<int> parseInput() {
+    final lines = input.asString;
+    final elfs = lines.split('\n\n');
 
-  // Part 1
-  final maxCal = elfsCals.reduce(max);
-  print('max: $maxCal');
+    final elfsCals = elfs.map(
+      (e) => e
+          .split('\n')
+          .map((calStr) => int.parse(calStr))
+          .fold(0, (acc, cal) => acc + cal),
+    );
 
-  // Part 2
-  final sortedCals = (elfsCals.toList()..sort()).reversed.toList();
-  final top3Sum = sortedCals[0] + sortedCals[1] + sortedCals[2];
-  print('top 3 sum: $top3Sum');
+    return elfsCals;
+  }
+
+  @override
+  solvePart1() {
+    return parseInput().reduce(max);
+  }
+
+  @override
+  solvePart2() {
+    final sortedCals = (parseInput().toList()..sort()).reversed.toList();
+    final top3Sum = sortedCals[0] + sortedCals[1] + sortedCals[2];
+    return top3Sum;  
+  }
+
 }

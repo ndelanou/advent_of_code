@@ -35,6 +35,8 @@ class Day05 extends GenericDay {
         move(stacks, from, to);
       }
     });
+
+    return stacks.map((e) => e.last).join();
   }
   
   @override
@@ -50,6 +52,8 @@ class Day05 extends GenericDay {
 
       moveMultiple(stacks, from, to, nb);
     });
+
+    return stacks.map((e) => e.last).join();
   }
 
   void move(List<List<String>> stacks, int from, int to) {

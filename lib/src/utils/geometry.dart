@@ -5,17 +5,17 @@ import 'utils.dart';
 class Segment {
   Segment(this.start, this.end);
 
-  final Point<int> start;
-  final Point<int> end;
+  final Position start;
+  final Position end;
 
-  Iterable<Point> get points {
+  Iterable<Position> get points {
     final xDiff = start.x - end.x;
     final yDiff = start.y - end.y;
     final maxDiff = max(xDiff.abs(), yDiff.abs());
 
     final iterationRange = Range(0, maxDiff).iterable;
     return iterationRange.map((i) {
-      return Point(
+      return Position(
         start.x + (-xDiff * i / maxDiff).round(),
         start.y + (-yDiff * i / maxDiff).round(),
       );
