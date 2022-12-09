@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart';
-
 import '../utils/utils.dart';
 
 class Day09 extends GenericDay {
@@ -13,9 +11,9 @@ class Day09 extends GenericDay {
   @override
   int solvePart1() {
     final instructions = parseInput();
-    final Set<Position> tailPositionsHistory = {Position(0,0)};
-    Position head = Position(0,0);
-    Position tail = Position(0,0);
+    final Set<Position> tailPositionsHistory = {Position(0, 0)};
+    Position head = Position(0, 0);
+    Position tail = Position(0, 0);
 
     for (var instruction in instructions) {
       final iSplits = instruction.split(' ');
@@ -35,7 +33,6 @@ class Day09 extends GenericDay {
           tailPositionsHistory.add(tail);
         }
       }
-      
     }
 
     return tailPositionsHistory.length; // 6081
@@ -50,9 +47,8 @@ class Day09 extends GenericDay {
   }
 
   Position computeTailPosition(int xDiff, int yDiff, Position head) {
-    int x = 0; 
+    int x = 0;
     int y = 0;
-
 
     if (xDiff.abs() <= 1) {
       x = head.x;
@@ -65,8 +61,7 @@ class Day09 extends GenericDay {
     } else {
       y = head.y - yDiff.sign;
     }
-    
-    
+
     return Position(x, y);
   }
 
@@ -77,11 +72,10 @@ class Day09 extends GenericDay {
   @override
   int solvePart2() {
     final instructions = parseInput();
-    final Set<Position> tailPositionsHistory = {Position(0,0)};
-    Position masterHead = Position(0,0);
-    List<Position> tails = List.generate(9, (index) => Position(0,0)); 
+    final Set<Position> tailPositionsHistory = {Position(0, 0)};
+    Position masterHead = Position(0, 0);
+    List<Position> tails = List.generate(9, (index) => Position(0, 0));
 
-    int instructionCount = 0;
     for (var instruction in instructions) {
       // print(instruction);
       final iSplits = instruction.split(' ');
@@ -104,20 +98,13 @@ class Day09 extends GenericDay {
             tails[j] = newTail;
 
             if (j == tails.length - 1) {
-              // print('$instructionCount -> $newTail ($masterHead) $tails');
-              
               tailPositionsHistory.add(newTail);
             }
-          }      
+          }
         }
-        // print(tails);
       }
-      instructionCount++;
     }
-
-    // print(tailPositionsHistory);
 
     return tailPositionsHistory.length; // 1968-, 2486-
   }
 }
-
