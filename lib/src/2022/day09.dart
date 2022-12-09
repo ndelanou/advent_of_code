@@ -77,7 +77,6 @@ class Day09 extends GenericDay {
     List<Position> tails = List.generate(9, (index) => Position(0, 0));
 
     for (var instruction in instructions) {
-      // print(instruction);
       final iSplits = instruction.split(' ');
       final headMoveDirection = iSplits[0];
       final headMoveAmount = int.parse(iSplits[1]);
@@ -105,6 +104,6 @@ class Day09 extends GenericDay {
       }
     }
 
-    return tailPositionsHistory.length; // 1968-, 2486-
+    return tailPositionsHistory.length; // 2487
   }
 }
