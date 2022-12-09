@@ -47,8 +47,8 @@ class Day09 extends GenericDay {
   }
 
   Position computeTailPosition(int xDiff, int yDiff, Position head) {
-    int x = 0;
-    int y = 0;
+    int x;
+    int y;
 
     if (xDiff.abs() <= 1) {
       x = head.x;
