@@ -16,18 +16,24 @@ class Day10 extends GenericDay {
     int instructionIndex = 0;
     int busy = 0;
     int register = 1;
+    int increment = 0;
 
     final captureCycles = [20, 60, 100, 140, 180, 220];
     int captureSum = 0;
 
     while(instructionIndex < instructions.length) {
       if (busy == 0) {
+        register += increment;
+        increment = 0;
+      }
+
+      if (busy == 0) {
         final instruction = instructions[instructionIndex];
         if(instruction == 'noop') {
           busy = 1;
         } else {
           final addValue = int.parse(instruction.split(' ').last);
-          register += addValue;
+          increment = addValue;
           busy = 2;
         }
         instructionIndex++;
@@ -35,12 +41,12 @@ class Day10 extends GenericDay {
 
       cycle++;
       busy--;
-      if (captureCycles.contains(cycle + 2)) {
-        captureSum += register * (cycle + 2);
+      if (captureCycles.contains(cycle)) {
+        captureSum += register * (cycle);
       };
     }
 
-    return captureSum;
+    return captureSum; // 14340
   }
 
   @override
