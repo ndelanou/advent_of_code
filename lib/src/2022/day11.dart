@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_cast
+
 import '../utils/utils.dart';
 
 import 'package:collection/collection.dart';
@@ -60,7 +62,6 @@ class Day11 extends GenericDay {
     final monkeys = parseInput();
     int round = 0;
     final gcd = monkeys.fold(1, (previousValue, element) => previousValue * element.divisionFactor);
-    print(gcd);
     while (round < 10000) {
       
       monkeys.forEach((monkey) {
@@ -82,8 +83,6 @@ class Day11 extends GenericDay {
 
     final mostActiveMonkeys = monkeys.sortedBy((element) => element.inspectedItems as num).reversed.take(2).toList();
 
-    // print(mostActiveMonkeys[0].inspectedItems);
-    // print(mostActiveMonkeys[1].inspectedItems);
     return mostActiveMonkeys[0].inspectedItems * mostActiveMonkeys[1].inspectedItems; // 56350
   }
 }
