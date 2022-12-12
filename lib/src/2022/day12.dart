@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
+import 'package:dijkstra/dijkstra.dart';
 
 import '../utils/utils.dart';
 
@@ -32,73 +35,42 @@ class Day12 extends GenericDay {
     grid.setValueAtPosition(end, z);
 
     // Explore
-    final Set<Link> links = {};
-    explore(grid, start, links);
+    final Set<Link> links = explore(grid);
 
     // Find path
-    Map<Position, int> visitedPosition = {start: 0};
-    currentBest = 100000000000;
-    final bestPath = findBestPath(links, start, end, visitedPosition);
+    final froms = links.map((e) => e.start).toSet();
+    final graphInput = Map.fromEntries(froms.map(
+      (f) => MapEntry(
+        f, 
+        Map.fromIterable(
+          links.where((l) => l.start == f).map((l) => l.end), 
+          key: (element) => element, 
+          value: (element) => 1
+        ),
+      )
+    ));
+    final dResult = Dijkstra.findPathFromGraph(graphInput, start, end);
 
-    return bestPath; // 408
-  }
-
-
-  int findBestPath(Set<Link> links, Position from, Position end, Map<Position, int> visitedPositions, {int currentStep = 0}) {
-    if (currentStep >= currentBest) return 100000000000;
-
-    final matchLinks = links.where((link) => link.start == from && (visitedPositions[link.end] ?? 100000000000) > currentStep + 1).toList();
-    // print(matchLinks);
-
-    if (matchLinks.isEmpty) return 100000000000;
-
-    List<int> results = [];
-    for (var matchLinks in matchLinks) {
-      visitedPositions[matchLinks.end] = currentStep + 1;
-
-      if (matchLinks.end == end) {
-        results.add(currentStep + 1);
-        currentBest = currentStep + 1;
-      } else {
-        results.add(findBestPath(links, matchLinks.end, end, visitedPositions, currentStep: currentStep + 1));
-      }
-    }
-
-    final lowest = results.sortedBy((element) => element as num).firstOrNull ?? 100000000000;
-    
-    return lowest;
+    return dResult.length - 1;
   }
   
-  explore(Grid<int> grid, Position from, Set<Link> links) {
-    List<Position> possibleMoves = [];
-    if (from.x > 0) {
-      possibleMoves.add(Position(from.x - 1, from.y));
-    }
-    if (from.x < grid.grid.first.length - 1) {
-      possibleMoves.add(Position(from.x + 1, from.y));
-    }
+  explore(Grid<int> grid) {
 
-    if (from.y > 0) {
-      possibleMoves.add(Position(from.x, from.y - 1));
-    }
-    if (from.y < grid.grid.length - 1) {
-      possibleMoves.add(Position(from.x, from.y + 1));
-    }
+    Set<Link> links = {};
 
-    possibleMoves = possibleMoves.where((move) {
-      final diff = grid.grid[move.y][move.x] - grid.grid[from.y][from.x];
-      return (grid.grid[move.y][move.x] >= a && diff <= 1);
-    }).toList();
-    
-    final addedLinks = possibleMoves.map((move) => Link(from, move)).toList();
-    links.addAll(addedLinks);
+    grid.forEach((x, y) {
+      final possibleMoves = grid
+        .adjacent(x, y)
+        .where((move) {
+          final diff = grid.grid[move.y][move.x] - grid.grid[y][x];
+          return (grid.grid[move.y][move.x] >= a) && (diff <= 1);
+        }).toList();
+      
+      final addedLinks = possibleMoves.map((move) => Link(Position(x,y), move)).toList();
+      links.addAll(addedLinks);
+    });
 
-    final alreadyMappedPositions = links.map((e) => e.start).toList();
-    final notMappedMoves = possibleMoves.where((element) => !alreadyMappedPositions.contains(element)).toList();
-
-    for (var move in notMappedMoves) {
-      explore(grid, move, links);
-    }
+    return links;
   }
 
   @override
@@ -117,41 +89,31 @@ class Day12 extends GenericDay {
     grid.setValueAtPosition(end, z);
 
     // Explore
-    final Set<Link> links = {};
-    explore(grid, start, links);
+    final Set<Link> links = explore(grid);
 
     // Find path
-    Map<Position, int> visitedPosition = {start: 0};
-    currentBest = 100000000000;
-    int bestPath = findBestDownhillPath(grid, links, end, visitedPosition);
+    final froms = links.map((e) => e.start).toSet();
+    final graphInput = Map.fromEntries(froms.map(
+      (f) => MapEntry(
+        f, 
+        Map.fromIterable(
+          links.where((l) => l.start == f).map((l) => l.end), 
+          key: (end) => end, 
+          value: (_) => 1
+        ),
+      )
+    ));
 
-    return bestPath; // 399
-  }
+    final allAPositions = <Position>[];
+    grid.forEach((x, y) {
+      if (grid.getValueAtPosition(Position(x,y)) == a) allAPositions.add(Position(x,y));
+    });
 
-  int currentBest = 0;
+    final allResults = allAPositions.map((currentA) => Dijkstra.findPathFromGraph(graphInput, currentA, end)).where((element) => element.isNotEmpty).sortedBy((element) => element.length as num);
 
-  int findBestDownhillPath(Grid<int> grid, Set<Link> links, Position from, Map<Position, int> visitedPositions, {int currentStep = 0}) {
-    if (currentStep >= currentBest) return 100000000000;
+    final bestPath = allResults.fold(1000000000, (prev, res) => min(prev, res.length - 1));
 
-    final matchLinks = links.where((link) => link.end == from && (visitedPositions[link.start] ?? 100000000000) > currentStep + 1).toList();
-
-    if (matchLinks.isEmpty) return 100000000000;
-
-    List<int> results = [];
-    for (var matchLinks in matchLinks) {
-      visitedPositions[matchLinks.start] = currentStep + 1;
-
-      if (grid.getValueAtPosition(matchLinks.start) == a) {
-        results.add(currentStep + 1);
-        currentBest = currentStep + 1;
-      } else {
-        results.add(findBestDownhillPath(grid, links, matchLinks.start, visitedPositions, currentStep: currentStep + 1));
-      }
-    }
-
-    final lowest = results.sortedBy((element) => element as num).firstOrNull ?? 100000000000;
-    
-    return lowest;
+    return bestPath;
   }
 }
 
