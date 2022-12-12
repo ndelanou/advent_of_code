@@ -34,10 +34,10 @@ class Day12 extends GenericDay {
     // Explore
     final Set<Link> links = {};
     explore(grid, start, links);
-    print(links.length);
 
     // Find path
     Map<Position, int> visitedPosition = {start: 0};
+    currentBest = 100000000000;
     final bestPath = findBestPath(links, start, end, visitedPosition);
 
     return bestPath; // 408
@@ -45,6 +45,8 @@ class Day12 extends GenericDay {
 
 
   int findBestPath(Set<Link> links, Position from, Position end, Map<Position, int> visitedPositions, {int currentStep = 0}) {
+    if (currentStep >= currentBest) return 100000000000;
+
     final matchLinks = links.where((link) => link.start == from && (visitedPositions[link.end] ?? 100000000000) > currentStep + 1).toList();
     // print(matchLinks);
 
@@ -56,6 +58,7 @@ class Day12 extends GenericDay {
 
       if (matchLinks.end == end) {
         results.add(currentStep + 1);
+        currentBest = currentStep + 1;
       } else {
         results.add(findBestPath(links, matchLinks.end, end, visitedPositions, currentStep: currentStep + 1));
       }
@@ -100,7 +103,55 @@ class Day12 extends GenericDay {
 
   @override
   int solvePart2() {
-    return 0;
+    final grid = Grid(parseInput());
+
+    final startX = grid.grid.map((e) => e.indexWhere((element) => element == S)).toList().firstWhere((element) => element != -1);
+    final startY = grid.grid.indexWhere((element) => element.contains(S));
+    final start = Position(startX, startY);
+
+    final endX = grid.grid.map((e) => e.indexWhere((element) => element == E)).toList().firstWhere((element) => element != -1);
+    final endY = grid.grid.indexWhere((element) => element.contains(E));
+    final end = Position(endX, endY);
+
+    grid.setValueAtPosition(start, a);
+    grid.setValueAtPosition(end, z);
+
+    // Explore
+    final Set<Link> links = {};
+    explore(grid, start, links);
+
+    // Find path
+    Map<Position, int> visitedPosition = {start: 0};
+    currentBest = 100000000000;
+    int bestPath = findBestDownhillPath(grid, links, end, visitedPosition);
+
+    return bestPath; // 399
+  }
+
+  int currentBest = 0;
+
+  int findBestDownhillPath(Grid<int> grid, Set<Link> links, Position from, Map<Position, int> visitedPositions, {int currentStep = 0}) {
+    if (currentStep >= currentBest) return 100000000000;
+
+    final matchLinks = links.where((link) => link.end == from && (visitedPositions[link.start] ?? 100000000000) > currentStep + 1).toList();
+
+    if (matchLinks.isEmpty) return 100000000000;
+
+    List<int> results = [];
+    for (var matchLinks in matchLinks) {
+      visitedPositions[matchLinks.start] = currentStep + 1;
+
+      if (grid.getValueAtPosition(matchLinks.start) == a) {
+        results.add(currentStep + 1);
+        currentBest = currentStep + 1;
+      } else {
+        results.add(findBestDownhillPath(grid, links, matchLinks.start, visitedPositions, currentStep: currentStep + 1));
+      }
+    }
+
+    final lowest = results.sortedBy((element) => element as num).firstOrNull ?? 100000000000;
+    
+    return lowest;
   }
 }
 
