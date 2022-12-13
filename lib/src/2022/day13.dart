@@ -72,8 +72,6 @@ class Day13 extends GenericDay {
       return res ? -1 : 1;
     });
 
-    print(sorted);
-
     final sep1Index = sorted.indexWhere((element) => element == sep1) + 1;
     final sep2Index = sorted.indexWhere((element) => element == sep2) + 1;
 
