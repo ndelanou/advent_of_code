@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
+
 import '../utils/utils.dart';
 
 class Day07 extends GenericDay {
@@ -17,11 +19,7 @@ class Day07 extends GenericDay {
     final maxIndex = crabs.reduce(max);
 
     for (var i = 0; i < maxIndex; i++) {
-      final cost = crabs.fold(0, (acc, crab) {
-        final diff = (i - crab).abs();
-        return acc + diff;
-      });
-
+      final cost = crabs.map((crab) =>  (i - crab).abs()).sum;
       minCost = min(minCost, cost);
     }
 
@@ -35,11 +33,7 @@ class Day07 extends GenericDay {
     final maxIndex = crabs.reduce(max);
 
     for (var i = 0; i < maxIndex; i++) {
-      final cost = crabs.fold(0, (acc, crab) {
-        final diff = (i - crab).abs();
-        return acc + computeCost(diff);
-      });
-
+      final cost = crabs.map((crab) => computeCost((i - crab).abs())).sum;
       minCost = min(minCost, cost);
     }
 
