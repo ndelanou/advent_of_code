@@ -4,6 +4,11 @@ import 'dart:math';
 import 'package:tuple/tuple.dart';
 
 typedef Position = Tuple2<int, int>;
+
+extension PositionExtension on Position {
+  Position moved(int dx, int dy) => Position(this.x + dx, this.y + dy);
+}
+
 typedef VoidGridCallback = void Function(int x, int y);
 
 /// A helper class for easier work with 2D data.
