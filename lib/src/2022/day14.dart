@@ -30,15 +30,14 @@ class Day14 extends GenericDay {
 
   Position sandSource = Position(500, 0);
 
-  bool isPointBlocked(Iterable<Segment> segments, Iterable<Position> stillSand,
-      Position position) {
-    return stillSand.contains(position) ||
-        segments.any((s) => s.contains(position));
+  bool isPointBlocked(Set<Position> walls, Iterable<Position> stillSand, Position position) {
+    return stillSand.contains(position) || walls.contains(position);
   }
 
   @override
   int solvePart1() {
     final segments = getSegments();
+    Set<Position> walls = segments.expand((s) => s.points).toSet();
     final maxY = segments.map((e) => max(e.start.y, e.end.y)).max;
 
     Set<Position> stillSand = {};
@@ -48,11 +47,10 @@ class Day14 extends GenericDay {
       Position evalPosition = sand.moved(0, 1);
 
       // direct down blocked
-      if (isPointBlocked(segments, stillSand, evalPosition)) {
-        if (!isPointBlocked(segments, stillSand, evalPosition.moved(-1, 0))) {
+      if (isPointBlocked(walls, stillSand, evalPosition)) {
+        if (!isPointBlocked(walls, stillSand, evalPosition.moved(-1, 0))) {
           evalPosition = evalPosition.moved(-1, 0);
-        } else if (!isPointBlocked(
-            segments, stillSand, evalPosition.moved(1, 0))) {
+        } else if (!isPointBlocked(walls, stillSand, evalPosition.moved(1, 0))) {
           evalPosition = evalPosition.moved(1, 0);
         } else {
           evalPosition = sand;
@@ -77,6 +75,8 @@ class Day14 extends GenericDay {
 
     segments.add(Segment(Position(300, maxY + 2), Position(700, maxY + 2)));
 
+    Set<Position> walls = segments.expand((s) => s.points).toSet();
+
     Set<Position> stillSand = {};
     Position sand = sandSource;
 
@@ -84,11 +84,10 @@ class Day14 extends GenericDay {
       Position evalPosition = sand.moved(0, 1);
 
       // direct down blocked
-      if (isPointBlocked(segments, stillSand, evalPosition)) {
-        if (!isPointBlocked(segments, stillSand, evalPosition.moved(-1, 0))) {
+      if (isPointBlocked(walls, stillSand, evalPosition)) {
+        if (!isPointBlocked(walls, stillSand, evalPosition.moved(-1, 0))) {
           evalPosition = evalPosition.moved(-1, 0);
-        } else if (!isPointBlocked(
-            segments, stillSand, evalPosition.moved(1, 0))) {
+        } else if (!isPointBlocked(walls, stillSand, evalPosition.moved(1, 0))) {
           evalPosition = evalPosition.moved(1, 0);
         } else {
           evalPosition = sand;
