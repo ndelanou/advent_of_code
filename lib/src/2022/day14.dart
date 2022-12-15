@@ -40,7 +40,7 @@ class Day14 extends GenericDay {
     Set<Position> walls = segments.expand((s) => s.points).toSet();
     final maxY = segments.map((e) => max(e.start.y, e.end.y)).max;
 
-    Set<Position> stillSand = {};
+    final Set<Position> stillSand = {};
     Position sand = sandSource;
 
     while (sand.y < maxY) {
@@ -77,7 +77,7 @@ class Day14 extends GenericDay {
 
     Set<Position> walls = segments.expand((s) => s.points).toSet();
 
-    Set<Position> stillSand = {};
+    final Set<Position> stillSand = {};
     Position sand = sandSource;
 
     while (!stillSand.contains(sandSource)) {
