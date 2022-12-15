@@ -58,3 +58,8 @@ extension ArgsMatcher on String? {
     return this == '-a' || this == '--all';
   }
 }
+
+
+
+// TODO:
+// * pathfinding: BFS, 1*, Djikstra
