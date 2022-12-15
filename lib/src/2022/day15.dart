@@ -45,21 +45,23 @@ class Day15 extends GenericDay {
   @override
   int solvePart2() {
     final lines = parseInput();
-    final ranges = lines.map((l) => Tuple2(l.item1, dist(l.item1, l.item2)));
+    final zones = lines.map((l) => Tuple2(l.item1, dist(l.item1, l.item2)));
     List<Position> matchs = [];
     final maxLinesWidth = 4000000;
     for (var y = 0; y < maxLinesWidth; y++) {
       for (var x = 0; x < maxLinesWidth; x++) {
         final pos = Position(x, y);
-        final range = ranges.firstWhereOrNull((l) {
+        final detectedZone = zones.firstWhereOrNull((l) {
           final currentDist = dist(pos, l.item1);
           return l.item2 >= currentDist;
         });
-        if (range == null) {
+        if (detectedZone == null) {
           matchs.add(pos);
           return matchs.first.x * 4000000 + matchs.first.y; 
         } else {
-          x = range.item1.x + range.item2 - (range.item1.y - pos.y).abs();
+          final sensor = detectedZone.item1;
+          final beaconDistanceFromSensor = detectedZone.item2;
+          x = sensor.x + beaconDistanceFromSensor - (sensor.y - pos.y).abs();
         }
       }
     }
