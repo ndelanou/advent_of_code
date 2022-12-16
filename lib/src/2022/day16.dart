@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:dijkstra/dijkstra.dart';
-import 'package:tuple/tuple.dart';
 
 import '../utils/utils.dart';
 
@@ -27,7 +28,7 @@ class Day16 extends GenericDay {
 
     Iterable<Valve> interestingValves = valves.where((v) => v.rate != 0 || v.name == start);
     for (final valve in interestingValves) {
-      for (var target in interestingValves.where((v) => v.name != valve.name)) {
+      for (var target in interestingValves) {
         final d = Dijkstra.findPathFromPairsList(graph, valve.name, target.name).length;
         if (!distances.containsKey(valve.name)) distances[valve.name] = Map();
         distances[valve.name]![target.name] = d;
@@ -41,56 +42,53 @@ class Day16 extends GenericDay {
   int solvePart1() {
     final valves = parseInput();
     final distances = computeDistances(valves, 'AA');
-    final bestScore = findBestScore(distances, 'AA', valves, {}, 0, 30, 0);
-    return bestScore;
+    final interestingValves = valves.where((v) => v.rate > 0);
+    final bestScore = findBestScore(distances, 'AA', interestingValves, 30);
+    return bestScore; // 1559 (1651)
   }
-
   
 
   @override
   int solvePart2() {
     final valves = parseInput();
     final distances = computeDistances(valves, 'AA');
-    final bestScore = findBestScoreWithMyElephantBuddy(distances, 'AA', valves, 26);
-    return bestScore;
+    final interestingValves = valves.where((v) => v.rate > 0);
+    final bestScore = findBestScoreWithMyElephantBuddy(distances, 'AA', 'AA', interestingValves, 26);
+    return bestScore; // 2191 (1707)
   }
 }
 
-// final test = ['DD', 'BB', 'JJ', 'HH', 'EE', 'CC'];
-int findBestScore(Map<String, Map<String, int>> graph,  String currentValve, List<Valve> valves, Set<String> history, int time, int maxTime, int score) {
-  final possibilities = valves.where((v) => !history.contains(v.name) && v.rate != 0).map((end) {
+int findBestScore(Map<String, Map<String, int>> graph, String currentValve, Iterable<Valve> valves, int remainingTime) {
+  return valves.map((end) {
     final distance = graph[currentValve]![end.name]!;
-    final valveOpenMinutes = maxTime - time - distance;
-    final potentialScore = valveOpenMinutes * end.rate;
-    return Tuple3(end.name, distance, potentialScore);
-  }).where((element) => time + element.item2 <= maxTime);
+    final valveOpenMinutes = remainingTime - distance;
+    final score = valveOpenMinutes * end.rate;
 
-  if (possibilities.isEmpty) return score;
-
-  final results = possibilities.map((r) {
-    final target = r.item1;
-    final newHistory = {...history, target};
-    return findBestScore(graph, target, valves, newHistory, time + r.item2, maxTime, score + r.item3);
-  }).toList();
-
-  return results.max; // --------1707
+    if (distance <= remainingTime) {
+      final target = end.name;
+      return score + findBestScore(graph, target, valves.where((v) => v.name != target).toList(), remainingTime - distance);
+    } else {
+      return 0;
+    }
+  }).maxOrNull ?? 0;
 }
 
+int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String initial, String currentValve, Iterable<Valve> valves, int remainingTime, [List<String> path = const []]) {
+  final availableValves = valves.where((v) => v.name != currentValve).toList();
 
-int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String start, List<Valve> valves, int maxTime) {
-  int score = 0;
-  int time = 0;
-  int mArrivingTime = 0, eArrivingTime = 0;
+  int bestScore = findBestScore(graph, initial, availableValves, 26);
 
-  while(time < maxTime) {
-    // TODO;
-    time++;
-  }
+  final rec = availableValves.map((v) {
+    final dist = graph[currentValve]![v.name]!;
+    final newRemainingTime = remainingTime - dist;
+    if (newRemainingTime >= 0) {
+      return v.rate * newRemainingTime + findBestScoreWithMyElephantBuddy(graph, initial, v.name, availableValves, newRemainingTime);
+    }
+    return 0;
+  }).maxOrNull ?? 0;
 
-  return score;
+  return max(bestScore, rec);
 }
-
-
 class Valve {
   final String name;
   final int rate;
