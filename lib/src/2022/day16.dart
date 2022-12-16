@@ -73,7 +73,7 @@ int findBestScore(Map<String, Map<String, int>> graph, String currentValve, Iter
   }).maxOrNull ?? 0;
 }
 
-int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String initial, String currentValve, Iterable<Valve> valves, int remainingTime, [List<String> path = const []]) {
+int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String initial, String currentValve, Iterable<Valve> valves, int remainingTime) {
   final availableValves = valves.where((v) => v.name != currentValve).toList();
 
   int bestScore = findBestScore(graph, initial, availableValves, 26);
