@@ -17,8 +17,12 @@ abstract class GenericDay {
   void printSolutions() {
     print("-------------------------");
     print("         Day $day        ");
+    final stopwatch = Stopwatch()..start();
     print("Solution for puzzle one: ${solvePart1()}");
+    print(">>> ${stopwatch.elapsed}");
+    stopwatch.reset();
     print("Solution for puzzle two: ${solvePart2()}");
+    print(">>> ${stopwatch.elapsed}");
     print("\n");
   }
 }
