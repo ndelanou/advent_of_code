@@ -73,8 +73,14 @@ int findBestScore(Map<String, Map<String, int>> graph, String currentValve, Iter
   }).maxOrNull ?? 0;
 }
 
+final Map<String, int> cache = {};
 int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String initial, String currentValve, Iterable<Valve> valves, int remainingTime) {
   final availableValves = valves.where((v) => v.name != currentValve).toList();
+
+  final availableValvesKey = availableValves.map((v) => v.name).sorted((a, b) => a.compareTo(b)).join('|');
+  final cacheKey = '$currentValve-$remainingTime-$availableValvesKey';
+  final cacheValue = cache[cacheKey];
+  if (cacheValue != null) return cacheValue;
 
   int bestScore = findBestScore(graph, initial, availableValves, 26);
 
@@ -87,7 +93,9 @@ int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String
     return 0;
   }).maxOrNull ?? 0;
 
-  return max(bestScore, rec);
+  bestScore = max(bestScore, rec);
+  cache[cacheKey] = bestScore;
+  return bestScore;
 }
 class Valve {
   final String name;
