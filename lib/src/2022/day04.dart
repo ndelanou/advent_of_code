@@ -50,7 +50,3 @@ class Day04 extends GenericDay {
     return overlaps; // 903
   }
 }
-
-void main(List<String> args) {
-  Day04().printSolutions();
-}
