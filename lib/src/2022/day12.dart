@@ -109,7 +109,7 @@ class Day12 extends GenericDay {
       if (grid.getValueAtPosition(Position(x,y)) == a) allAPositions.add(Position(x,y));
     });
 
-    final allResults = allAPositions.map((currentA) => Dijkstra.findPathFromGraph(graphInput, currentA, end)).where((element) => element.isNotEmpty).sortedBy((element) => element.length as num);
+    final allResults = allAPositions.map((currentA) => Dijkstra.findPathFromGraph(graphInput, currentA, end)).where((element) => element.isNotEmpty).sorted((a, b) => a.length.compareTo(b.length));
 
     final bestPath = allResults.fold(1000000000, (prev, res) => min(prev, res.length - 1));
 

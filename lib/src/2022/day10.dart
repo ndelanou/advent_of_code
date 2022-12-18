@@ -43,7 +43,7 @@ class Day10 extends GenericDay {
       busy--;
       if (captureCycles.contains(cycle)) {
         captureSum += register * (cycle);
-      };
+      }
     }
 
     return captureSum; // 14340
