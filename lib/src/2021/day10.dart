@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 
 import '../utils/utils.dart';
 
-class Day09 extends GenericDay {
-  Day09() : super(2021, 10);
+class Day10 extends GenericDay {
+  Day10() : super(2021, 10);
 
   @override
   Iterable<List<String>> parseInput() {
@@ -84,8 +84,4 @@ class Day09 extends GenericDay {
     return scores[scores.length ~/ 2];
   }
 
-}
-
-void main(List<String> args) {
-  Day09().printSolutions();
 }

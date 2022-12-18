@@ -5,12 +5,12 @@ import 'package:advent_of_code/src/utils/generic_day.dart';
 /// List holding all the solution classes.
 final days = <GenericDay>[
   Day01(),
-  // Day02(),
-  // Day03(),
-  // Day04(),
+  Day02(),
+  Day03(),
+  Day04(),
   Day05(),
-  // Day06(),
-  // Day07(),
+  Day06(),
+  Day07(),
   Day08(),
   Day09(),
   Day10(),
@@ -65,4 +65,4 @@ extension ArgsMatcher on String? {
 
 
 // TODO:
-// * pathfinding: BFS, 1*, Djikstra
+// * pathfinding: BFS, A*, Djikstra

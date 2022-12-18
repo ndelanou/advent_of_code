@@ -1,36 +1,45 @@
-import 'dart:io';
+import '../utils/utils.dart';
 
-// const filename = 'input.txt';
+class Day06 extends GenericDay {
+  Day06() : super(2022, 6);
 
-// void main06(List<String> args) async {
-//   final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
-//   final input = await file.readAsString();
-  
-//   // Part 1
-//   print(findMessageKeyIndex(input, 4)); // 1804
+  @override
+  String parseInput() {
+    return input.asString;
+  }
 
-//   // Part 2
-//   print(findMessageKeyIndex(input, 14)); // 2508
-// }
+  @override
+  solvePart1() {
+    final message = parseInput();
+    return findMessageKeyIndex(message, 4);
+  }
 
-// int findMessageKeyIndex(String input, int keyLength) {
-//   for (var i = keyLength; i < input.length; i++) {
-//     final sub = input.substring(i - keyLength, i);
+  @override
+  solvePart2() {
+    final message = parseInput();
+    return findMessageKeyIndex(message, 14);
+  }
 
-//     if (isMessageKey(sub)) return i;
-//   }
-//   return -1;
-// }
+  int findMessageKeyIndex(String input, int keyLength) {
+    for (var i = keyLength; i < input.length; i++) {
+      final sub = input.substring(i - keyLength, i);
 
-// bool isMessageKey(String input) {
-//   // // V1
-//   // for (var j = 0; j < input.length; j++) {
-//   //   final char = input[j];
-//   //   if (input.indexOf(char) != input.lastIndexOf(char)) return false;
-//   // }
+      if (isMessageKey(sub)) return i;
+    }
+    return -1;
+  }
 
-//   // return true;
+  // V1
+  // bool isMessageKey(String input) {
+  //   for (var j = 0; j < input.length; j++) {
+  //     final char = input[j];
+  //     if (input.indexOf(char) != input.lastIndexOf(char)) return false;
+  //   }
+  //   return true;
+  // }
 
-//   // V2 : inspired from https://github.com/darrenaustin/advent-of-code-dart/blob/main/lib/src/2022/day06.dart
-//   return input.codeUnits.toSet().length == input.length;
-// }
+  // V2 : inspired from https://github.com/darrenaustin/advent-of-code-dart/blob/main/lib/src/2022/day06.dart
+  bool isMessageKey(String input) {
+    return input.codeUnits.toSet().length == input.length;
+  }
+}

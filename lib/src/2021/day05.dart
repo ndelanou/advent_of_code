@@ -2,8 +2,6 @@ import 'package:collection/collection.dart';
 
 import '../utils/utils.dart';
 
-const filename = 'input.txt';
-
 class Day05 extends GenericDay {
   Day05() : super(2022, 5);
 

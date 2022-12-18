@@ -1,51 +1,55 @@
-import 'dart:io';
+import '../utils/utils.dart';
 
-// const filename = 'input.txt';
-// void main(List<String> args) async {
-//   final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
-//   final input = await file.readAsString();
+class Day03 extends GenericDay {
+  Day03() : super(2022, 3);
 
-//   final lines = input.split('\n');
-//   print('lines: ${lines.length}');
+  @override
+  List<String> parseInput() => input.getPerLine();
 
-//   // Part 1
-//   final scores = lines.map((l) {
-//     final halfLength = l.length ~/ 2;
-//     final first = l.substring(0, halfLength);
-//     final second = l.substring(halfLength, l.length);
+  @override
+  solvePart1() {
+    final lines = parseInput();
 
-//     final commonLetter = first.codeUnits.firstWhere((f) => second.codeUnits.contains(f));
+    final scores = lines.map((l) {
+      final halfLength = l.length ~/ 2;
+      final first = l.substring(0, halfLength);
+      final second = l.substring(halfLength, l.length);
 
-//     return getLetterPrio(commonLetter);
-//   });
+      final commonLetter = first.codeUnits.firstWhere((f) => second.codeUnits.contains(f));
 
-//   print(scores.fold<int>(0, (acc, score) => acc + score)); // 7737
+      return getLetterPrio(commonLetter);
+    });
 
-//   // Part 2
-//   var sum = 0;
-//   for (var i = 0; i < lines.length ~/ 3; i++) {
+    return scores.fold(0, (acc, score) => acc + score);
+  }
 
-//     final a = lines[i*3].codeUnits;
-//     final b = lines[i*3+1].codeUnits;
-//     final c = lines[i*3+2].codeUnits;
+  @override
+  solvePart2() {
+    final lines = parseInput();
 
-//     final commonLetter = a.firstWhere((aChar) => b.contains(aChar) && c.contains(aChar));
+    var sum = 0;
+    for (var i = 0; i < lines.length ~/ 3; i++) {
 
-//     sum += getLetterPrio(commonLetter);
-//   }
+      final a = lines[i*3].codeUnits;
+      final b = lines[i*3+1].codeUnits;
+      final c = lines[i*3+2].codeUnits;
 
-//   print(sum); // 2697
-  
-// }
+      final commonLetter = a.firstWhere((aChar) => b.contains(aChar) && c.contains(aChar));
 
+      sum += getLetterPrio(commonLetter);
+    }
 
-// final aOffset = 'a'.codeUnits.first;
-// final AOffset = 'A'.codeUnits.first;
+    return sum;
+  }
 
-// int getLetterPrio(int codeUnit) {
-//   if (codeUnit <= 'Z'.codeUnits.first) {
-//       return codeUnit - AOffset + 27;
-//     } else {
-//       return codeUnit - aOffset + 1;
-//     }
-// }
+  final aOffset = 'a'.codeUnits.first;
+  final capAOffset = 'A'.codeUnits.first;
+
+  int getLetterPrio(int codeUnit) {
+    if (codeUnit <= 'Z'.codeUnits.first) {
+        return codeUnit - capAOffset + 27;
+      } else {
+        return codeUnit - aOffset + 1;
+      }
+  }
+}

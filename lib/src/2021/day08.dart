@@ -80,7 +80,3 @@ class Day08 extends GenericDay {
   }
     
 }
-
-void main(List<String> args) {
-  Day08().printSolutions();
-}

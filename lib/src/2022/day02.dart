@@ -1,12 +1,59 @@
-import 'dart:io';
+import '../utils/utils.dart';
 
-const filename = 'input.txt';
-void main(List<String> args) async {
-  final file = File('${Platform.script.path.replaceAll('main.dart', filename)}');
-  final input = await file.readAsString();
+class Day02 extends GenericDay {
+  Day02() : super(2022, 2);
 
-  final lines = input.split('\n');
-  print('lines: ${lines.length}');
+  @override
+  List<String> parseInput() => input.getPerLine();
+
+  @override
+  solvePart1() {
+    final lines = parseInput();
+
+    final scores = lines.map((l) {
+      final oMove = l[0];
+      final yMove = l[2];
+
+      return calculateOutcomeScore(oMove, yMove);
+    });
+
+    return scores.fold(0, (acc, score) => acc + score);
+  }
+
+  @override
+  solvePart2() {
+    final lines = parseInput();
+
+    final scores2 = lines.map((l) {
+      final oMove = l[0];
+      final eOutcome = l[2];
+
+      String yMove;
+      if (eOutcome == 'X') {
+        if (oMove == 'A') {
+          yMove = 'Z';
+        } else if (oMove == 'B') {
+          yMove = 'X';
+        } else {
+          yMove = 'Y';
+        }
+      } else if (eOutcome == 'Y') {
+        yMove = String.fromCharCode(oMove.codeUnits.first + diffOffset);
+      } else {
+        if (oMove == 'A') {
+          yMove = 'Y';
+        } else if (oMove == 'B') {
+          yMove = 'Z';
+        } else {
+          yMove = 'X';
+        }
+      }
+
+      return calculateOutcomeScore(oMove, yMove);
+    });
+
+    return scores2.fold(0, (acc, score) => acc + score);
+  }
 
   final diffOffset = 'X'.codeUnits.first - 'A'.codeUnits.first;
   final xOffset = 'X'.codeUnits.first;
@@ -29,46 +76,4 @@ void main(List<String> args) async {
 
     return moveScore + resultScore;
   }
-
-  // Part 1
-  final scores = lines.map((l) {
-    final oMove = l[0];
-    final yMove = l[2];
-
-    return calculateOutcomeScore(oMove, yMove);
-  });
-
-  print(scores.fold<int>(0, (acc, score) => acc + score)); // 11150
-
-  // Part 2
-  final scores2 = lines.map((l) {
-    final oMove = l[0];
-    final eOutcome = l[2];
-
-    String yMove;
-    if (eOutcome == 'X') {
-      if (oMove == 'A') {
-        yMove = 'Z';
-      } else if (oMove == 'B') {
-        yMove = 'X';
-      } else {
-        yMove = 'Y';
-      }
-    } else if (eOutcome == 'Y') {
-      yMove = String.fromCharCode(oMove.codeUnits.first + diffOffset);
-    } else {
-      if (oMove == 'A') {
-        yMove = 'Y';
-      } else if (oMove == 'B') {
-        yMove = 'Z';
-      } else {
-        yMove = 'X';
-      }
-    }
-
-    return calculateOutcomeScore(oMove, yMove);
-  });
-
-  print(scores2.fold<int>(0, (acc, score) => acc + score)); // 8295
-  
 }

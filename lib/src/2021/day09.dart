@@ -49,7 +49,3 @@ class Day09 extends GenericDay {
 
     
 }
-
-void main(List<String> args) {
-  Day09().printSolutions();
-}
