@@ -56,10 +56,6 @@ class Day11 extends GenericDay {
       });
     }
 
-    grid.rows.forEach((row) {
-      print(row.join(' '));
-    });
-
     return flashes;
   }
 
@@ -106,10 +102,6 @@ class Day11 extends GenericDay {
       if (flashCount == 100) allFlashes = true;
       step++;
     }
-
-    grid.rows.forEach((row) {
-      print(row.join(' '));
-    });
 
     return step;
   }
