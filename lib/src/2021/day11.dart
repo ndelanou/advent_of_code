@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart';
-
 import '../utils/utils.dart';
 
 class Day11 extends GenericDay {
@@ -8,11 +6,12 @@ class Day11 extends GenericDay {
   @override
   Grid parseInput() {
     final lines = input
-      .getPerLine()
-      .map((l) => 
-        l.split('').map((c) => int.parse(c)).toList()
-      ).toList();
-      
+        .getPerLine()
+        .map(
+          (l) => l.split('').map((c) => int.parse(c)).toList(),
+        )
+        .toList();
+
     return Grid(lines);
   }
 
@@ -65,7 +64,7 @@ class Day11 extends GenericDay {
     int step = 0;
     bool allFlashes = false;
 
-    while(!allFlashes) {
+    while (!allFlashes) {
       // Increment each by 1
       grid.forEach((x, y) {
         grid.setValueAt(x, y, grid.getValueAt(x, y) + 1);
@@ -105,8 +104,4 @@ class Day11 extends GenericDay {
 
     return step;
   }
-}
-
-void main(List<String> args) {
-  Day11().printSolutions();
 }
