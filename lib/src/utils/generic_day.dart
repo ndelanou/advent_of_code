@@ -15,6 +15,9 @@ abstract class GenericDay {
   dynamic solvePart2();
 
   void printSolutions() {
+    // input warmup
+    parseInput();
+    
     print("-------------------------");
     print("         Day $day        ");
     final stopwatch = Stopwatch()..start();
