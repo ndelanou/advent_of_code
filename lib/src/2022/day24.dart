@@ -34,7 +34,7 @@ class Day24 extends GenericDay {
     Set<Position> evaluatingPositions = {start};
     for (var i = 0; i < 100000000; i++) {
       final nextBlizzards = currentBlizzards.map((b) => b.nextPosition(gridDimension)).toList();
-      evaluatingPositions = evaluatingPositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end)).expand((m) => m).toSet();
+      evaluatingPositions = evaluatingPositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end)).flattened.toSet();
       evaluatingPositions = evaluatingPositions.sorted((a, b) => a.distance(end).compareTo(b.distance(end))).take(50).toSet();
       if (evaluatingPositions.any((pos) => pos == end)) return Tuple2(i + 1, nextBlizzards);
       currentBlizzards = nextBlizzards;
@@ -42,9 +42,10 @@ class Day24 extends GenericDay {
     throw 'Should not happend';
   }
 
+
   // Returns all filterd possible positions for position
-  List<Position> possibleTargets(Position position, Tuple2<int, int> gridDimension, List<Blizzard> nextBlizzards, Position start, Position end) {
-    return [
+  Iterable<Position> possibleTargets(Position position, Tuple2<int, int> gridDimension, List<Blizzard> nextBlizzards, Position start, Position end) sync* {
+    yield* [
       Position(position.x, position.y),
       Position(position.x, position.y - 1),
       Position(position.x + 1, position.y),
@@ -58,7 +59,7 @@ class Day24 extends GenericDay {
             pos == start || pos == end
           )
         ) && nextBlizzards.every((b) => b.position != pos);
-    }).toList();
+    });
   }
 
   @override
@@ -82,6 +83,14 @@ extension PositionExtension on Position {
   int distance(Position other) {
     return (this.x - other.x).abs() + (this.y - other.y).abs();
   }    
+}
+
+extension ListExtension<T> on List<T> {
+  Iterable<T> flatten<T>(Iterable<Iterable<T>> items) sync* {
+    for (var i in items) {
+      yield* i;
+    }
+  }
 }
 
 class Blizzard {
