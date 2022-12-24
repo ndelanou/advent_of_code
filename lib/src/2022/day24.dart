@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:dijkstra/dijkstra.dart';
 import 'package:tuple/tuple.dart';
 
 import '../utils/utils.dart';
@@ -8,12 +7,12 @@ class Day24 extends GenericDay {
   Day24() : super(2022, 24);
 
   @override
-  Tuple2<Position, Iterable<Blizzard>> parseInput() {
+  Tuple2<Position, List<Blizzard>> parseInput() {
     final lines = input.getPerLine();
     final blizzards = lines.mapIndexed(
       (y, l) => l.split('').mapIndexed((x, e) => (e == '.' || e == '#') ? null : Blizzard(Position(x, y), Blizzard.directionFromString(e))).whereNotNull().toList()
     ).expand((element) => element);
-    return Tuple2(Position(lines.first.length, lines.length), blizzards);
+    return Tuple2(Position(lines.first.length, lines.length), blizzards.toList());
   }
 
   @override
@@ -30,16 +29,13 @@ class Day24 extends GenericDay {
     return bestPathLength;
   }
 
-  Tuple2<int, Iterable<Blizzard>> findBestPathLength(Tuple2<int, int> gridDimension, Iterable<Blizzard> initialBlizzards, Position start, Position end) {
-    Iterable<Blizzard> currentBlizzards = initialBlizzards;
+  Tuple2<int, List<Blizzard>> findBestPathLength(Tuple2<int, int> gridDimension, List<Blizzard> initialBlizzards, Position start, Position end) {
+    List<Blizzard> currentBlizzards = initialBlizzards;
     Set<Position> evaluatingPositions = {start};
     for (var i = 0; i < 100000000; i++) {
-      final nextBlizzards = currentBlizzards.map((b) => b.nextPosition(gridDimension));
-
-      if (i % 10 == 0) print('========= $i ${evaluatingPositions.length}');
-
+      final nextBlizzards = currentBlizzards.map((b) => b.nextPosition(gridDimension)).toList();
       evaluatingPositions = evaluatingPositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end)).expand((m) => m).toSet();
-      evaluatingPositions = evaluatingPositions.sorted((a, b) => a.distance(end).compareTo(b.distance(end))).take(30).toSet();
+      evaluatingPositions = evaluatingPositions.sorted((a, b) => a.distance(end).compareTo(b.distance(end))).take(50).toSet();
       if (evaluatingPositions.any((pos) => pos == end)) return Tuple2(i + 1, nextBlizzards);
       currentBlizzards = nextBlizzards;
     }
@@ -47,17 +43,13 @@ class Day24 extends GenericDay {
   }
 
   // Returns all filterd possible positions for position
-  Iterable<Position> possibleTargets(Position position, Tuple2<int, int> gridDimension, Iterable<Blizzard> nextBlizzards, Position start, Position end) {
+  List<Position> possibleTargets(Position position, Tuple2<int, int> gridDimension, List<Blizzard> nextBlizzards, Position start, Position end) {
     return [
       Position(position.x, position.y),
       Position(position.x, position.y - 1),
-      // Position(position.x + 1, position.y - 1),
       Position(position.x + 1, position.y),
-      // Position(position.x + 1, position.y + 1),
       Position(position.x, position.y + 1),
-      // Position(position.x - 1, position.y + 1),
       Position(position.x - 1, position.y),
-      // Position(position.x - 1, position.y - 1),
     ].where((pos) {
       return (
           (
@@ -66,7 +58,7 @@ class Day24 extends GenericDay {
             pos == start || pos == end
           )
         ) && nextBlizzards.every((b) => b.position != pos);
-    });
+    }).toList();
   }
 
   @override
@@ -109,35 +101,25 @@ class Blizzard {
     return Blizzard(Position(newX, newY), direction);
   }
 
+  static const _directions = [ 
+    Position(1, 0), 
+    Position(0, 1), 
+    Position(-1, 0), 
+    Position(0, -1),
+  ];
+
+  static const _directionChars = [ 
+    '>',
+    'v',
+    '<',
+    '^',
+  ];
+
   static Position directionFromString(String char) {
-    switch (char) {
-      case '>':
-        return Position(1, 0);
-      case 'v':
-        return Position(0, 1);
-      case '<':
-        return Position(-1, 0);
-      case '^':
-        return Position(0, -1);
-      default:
-        throw 'Should not happend';
-    }
+    return _directions[_directionChars.indexOf(char)];
   }
 
   static String stringFromDirection(Position direction) {
-    if (direction == Position(1, 0)) {
-      return '>';
-    }
-    else if (direction == Position(0, 1)) {
-      return 'v';
-    }
-    else if (direction == Position(-1, 0)) {
-      return '<';
-    }
-    else if (direction == Position(0, -1)) {
-      return '^';
-    } else {
-      throw 'Should not happend';
-    }
+    return _directionChars[_directions.indexOf(direction)];
   }
 }
