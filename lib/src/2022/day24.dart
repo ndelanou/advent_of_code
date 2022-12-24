@@ -20,54 +20,30 @@ class Day24 extends GenericDay {
   int solvePart1() {
     final data = parseInput();
     final gridDimension = data.item1;
-    final blizzards = data.item2;
+    final initialBlizzards = data.item2;
 
     final start = Position(1, 0);
     final end = Position(gridDimension.x - 2, gridDimension.y - 1);
-    final paths = buildPathMap(5, gridDimension, blizzards, start, end);
-    final oneWayGraph = paths.fold(<String, Map<String, int>>{}, (agg, path) {
-      if (!agg.containsKey(path.first)) {
-        agg[path.first] = {};
-      }
-      agg[path.first]![path.last] = 1;
-      return agg;
-    });
-    final bestPath = Dijkstra.findPathFromGraph(oneWayGraph, 'start', 'end');
-    print(bestPath);
+    final result = findBestPathLength(gridDimension, initialBlizzards, start, end);
+    final bestPathLength = result.item1;
 
-    return bestPath.length - 1;
+    return bestPathLength;
   }
 
-  Iterable<List<String>> buildPathMap(int iterations, Tuple2<int, int> gridDimension, Iterable<Blizzard> initialBlizzards, Position start, Position end) sync* {
-    
+  Tuple2<int, Iterable<Blizzard>> findBestPathLength(Tuple2<int, int> gridDimension, Iterable<Blizzard> initialBlizzards, Position start, Position end) {
     Iterable<Blizzard> currentBlizzards = initialBlizzards;
-    for (var i = 0; i < iterations; i++) {
+    Set<Position> evaluatingPositions = {start};
+    for (var i = 0; i < 100000000; i++) {
       final nextBlizzards = currentBlizzards.map((b) => b.nextPosition(gridDimension));
 
-      if (i % 10 == 0) print('========= $i');
+      if (i % 10 == 0) print('========= $i ${evaluatingPositions.length}');
 
-      final availablePositions = allGridPositions(gridDimension, currentBlizzards, start, end);
-      final availableMoves = availablePositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end).map((t) => Tuple2(p, t))).expand((m) => m);
-      final pathPairs = availableMoves.map((e) {
-        final from = e.item1 == start ? '${i == 0 ? '' : '$i-'}start' : e.item1 == end ? 'end' : '$i-${e.item1.x}-${e.item1.y}';
-        final to = e.item2 == start ? '${i+1}-start' : e.item2 == end ? 'end' : '${i+1}-${e.item2.x}-${e.item2.y}';
-        return [from, to];
-      });
-      yield* pathPairs;
+      evaluatingPositions = evaluatingPositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end)).expand((m) => m).toSet();
+      evaluatingPositions = evaluatingPositions.sorted((a, b) => a.distance(end).compareTo(b.distance(end))).take(30).toSet();
+      if (evaluatingPositions.any((pos) => pos == end)) return Tuple2(i + 1, nextBlizzards);
       currentBlizzards = nextBlizzards;
     }
-  }
-
-  Iterable<Position> allGridPositions(Tuple2<int, int> gridDimension, Iterable<Blizzard> currentBlizzards, Position start, Position end) sync* {
-    yield start;
-    for (var i = 1; i < gridDimension.x - 1; i++) {
-      for (var j = 1; j < gridDimension.y - 1; j++) {
-        final pos = Position(i, j);
-        if (!currentBlizzards.any((b) => b.position == pos)) {
-          yield pos;
-        }
-      } 
-    }
+    throw 'Should not happend';
   }
 
   // Returns all filterd possible positions for position
@@ -87,7 +63,7 @@ class Day24 extends GenericDay {
           (
             pos.x >= 1 && pos.y >= 1 && pos.x < gridDimension.x - 1 && pos.y < gridDimension.y - 1
           ) || (
-            pos == end
+            pos == start || pos == end
           )
         ) && nextBlizzards.every((b) => b.position != pos);
     });
@@ -95,10 +71,25 @@ class Day24 extends GenericDay {
 
   @override
   int solvePart2() {
-    final lines = parseInput();
-    return 0;
+    final data = parseInput();
+    final gridDimension = data.item1;
+    final initialBlizzards = data.item2;
+
+    final start = Position(1, 0);
+    final end = Position(gridDimension.x - 2, gridDimension.y - 1);
+    final result1 = findBestPathLength(gridDimension, initialBlizzards, start, end);
+    final result2 = findBestPathLength(gridDimension, result1.item2, end, start);
+    final result3 = findBestPathLength(gridDimension, result2.item2, start, end);
+
+    return result1.item1 + result2.item1 + result3.item1;
   }
 
+}
+
+extension PositionExtension on Position {
+  int distance(Position other) {
+    return (this.x - other.x).abs() + (this.y - other.y).abs();
+  }    
 }
 
 class Blizzard {
