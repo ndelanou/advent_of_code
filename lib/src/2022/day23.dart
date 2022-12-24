@@ -103,7 +103,6 @@ class Day23 extends GenericDay {
       }
     }
 
-
     throw 'Should not happend';
   }
 }
