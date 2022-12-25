@@ -28,6 +28,7 @@ final days = <GenericDay>[
   Day22(),
   Day23(),
   Day24(),
+  Day25(),
 ];
 
 void main(List<String?> args) {
