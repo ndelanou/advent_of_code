@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:dijkstra/dijkstra.dart';
 import 'package:tuple/tuple.dart';
 
+import '../utils/pathfinding/dijkstra.dart';
 import '../utils/utils.dart';
 
 class Day24 extends GenericDay {
@@ -106,15 +106,9 @@ class Day24Dijkstra extends GenericDay {
 
   Tuple2<int, List<Blizzard>> findBestPathLength(Tuple2<int, int> gridDimension, List<Blizzard> initialBlizzards, Position start, Position end) {
     final paths = dBuildPathMap(300, gridDimension, initialBlizzards, start, end).toList();
-    final oneWayGraph = paths.fold(<String, Map<String, int>>{}, (agg, path) {
-      if (!agg.containsKey(path.first)) {
-        agg[path.first] = {};
-      }
-      agg[path.first]![path.last] = 1;
-      return agg;
-    });
-    final bestPath = Dijkstra.findPathFromGraph(oneWayGraph, 'start', 'end');
-    final bestPathLength = bestPath.length - 1;
+    final oneWayGraph = paths.groupFoldBy<String, List<(String, int)>>((p) => p.first, (agg, p) => (agg ?? [])..add((p.last, 1))); 
+    final bestPath = Dijkstra.findPathFromGraph(oneWayGraph, start: 'start', end: 'end');
+    final bestPathLength = bestPath.$0.length - 1;
     return Tuple2(bestPathLength, blizzardAfter(bestPathLength, initialBlizzards, gridDimension));
   }
 

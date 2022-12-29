@@ -1,7 +1,7 @@
 import 'dart:math';
 
+import 'package:advent_of_code/src/utils/pathfinding/dijkstra.dart';
 import 'package:collection/collection.dart';
-import 'package:dijkstra/dijkstra.dart';
 
 import '../utils/utils.dart';
 
@@ -23,13 +23,13 @@ class Day16 extends GenericDay {
   Map<String, Map<String, int>> computeDistances(List<Valve> valves, String start) {
     Map<String, Map<String, int>> distances = {};
     final graph = valves
-      .map((v) => v.connections.map((c) => [v.name, c].sorted((a, b) => a.compareTo(b))))
+      .map((v) => v.connections.map((c) => (v.name, c, 1)))
       .expand((e) => e).toSet().toList();
 
     Iterable<Valve> interestingValves = valves.where((v) => v.rate != 0 || v.name == start);
     for (final valve in interestingValves) {
       for (var target in interestingValves) {
-        final d = Dijkstra.findPathFromPairsList(graph, valve.name, target.name).length;
+        final d = Dijkstra.findPathFromPairs(graph, start: valve.name, end: target.name).$0.length;
         if (!distances.containsKey(valve.name)) distances[valve.name] = Map();
         distances[valve.name]![target.name] = d;
       }
@@ -107,4 +107,3 @@ class Valve {
   @override
   String toString() => '$name ($rate) - ${connections.join(',')}';
 }
-

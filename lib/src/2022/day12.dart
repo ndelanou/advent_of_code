@@ -1,7 +1,5 @@
-import 'dart:math';
-
+import 'package:advent_of_code/src/utils/pathfinding/dijkstra.dart';
 import 'package:collection/collection.dart';
-import 'package:dijkstra/dijkstra.dart';
 
 import '../utils/utils.dart';
 
@@ -38,20 +36,10 @@ class Day12 extends GenericDay {
     final Set<Link> links = explore(grid);
 
     // Find path
-    final froms = links.map((e) => e.start).toSet();
-    final graphInput = Map.fromEntries(froms.map(
-      (f) => MapEntry(
-        f, 
-        Map.fromIterable(
-          links.where((l) => l.start == f).map((l) => l.end), 
-          key: (element) => element, 
-          value: (element) => 1
-        ),
-      )
-    ));
-    final dResult = Dijkstra.findPathFromGraph(graphInput, start, end);
+    final graphInput = links.map((l) => (l.start, l.end, 1)).toList();
+    final dResult = Dijkstra.findPathFromPairs(graphInput, start: start, end: end);
 
-    return dResult.length - 1;
+    return dResult.$0.length - 1;
   }
   
   explore(Grid<int> grid) {
@@ -92,26 +80,18 @@ class Day12 extends GenericDay {
     final Set<Link> links = explore(grid);
 
     // Find path
-    final froms = links.map((e) => e.start).toSet();
-    final graphInput = Map.fromEntries(froms.map(
-      (f) => MapEntry(
-        f, 
-        Map.fromIterable(
-          links.where((l) => l.start == f).map((l) => l.end), 
-          key: (end) => end, 
-          value: (_) => 1
-        ),
-      )
-    ));
+    final graphInput = links.groupFoldBy<Position, List<(Position, num)>>((l) => l.start, (prev, l) => (prev ?? [])..add((l.end, 1)));
 
     final allAPositions = <Position>[];
     grid.forEach((x, y) {
       if (grid.getValueAtPosition(Position(x,y)) == a) allAPositions.add(Position(x,y));
     });
 
-    final allResults = allAPositions.map((currentA) => Dijkstra.findPathFromGraph(graphInput, currentA, end)).where((element) => element.isNotEmpty).sorted((a, b) => a.length.compareTo(b.length));
+    final allResults = allAPositions
+      .map((currentA) => Dijkstra.findPathFromGraph(graphInput, start: currentA, end: end))
+      .where((element) => element.$0.isNotEmpty);
 
-    final bestPath = allResults.fold(1000000000, (prev, res) => min(prev, res.length - 1));
+    final bestPath = allResults.map((r) => r.$0.length - 1).min;
 
     return bestPath;
   }
@@ -143,4 +123,3 @@ class Link {
     return '(${start.x},${start.y})->(${end.x},${end.y})';
   }
 }
-

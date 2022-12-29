@@ -5,10 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "2022",
+            "name": "challenges",
             "request": "launch",
             "type": "dart",
             "program": "main.dart",
+            "toolArgs": [
+                "--enable-experiment=records",
+            ],
+        },
+
+        {
+            "name": "test",
+            "request": "launch",
+            "type": "dart",
+            "program": "${file}",
+            "toolArgs": [
+                "--enable-experiment=records",
+            ],
         },
     ]
 }

@@ -34,11 +34,11 @@ class Day21 extends GenericDay {
     }
 
     final rootMonkey = monkeys.firstWhere((m) => m.name == 'root');
-    return rootMonkey.number!;
+    return rootMonkey.number!.toInt();
   }
 
   @override
-  int solvePart2() {;
+  int solvePart2() {
     int? result;
 
     int prevStart = -1;
