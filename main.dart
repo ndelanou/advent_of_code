@@ -45,7 +45,15 @@ void main(List<String?> args) {
 
   onlyShowLast
       ? days.last.printSolutions()
-      : days.forEach((day) => day.printSolutions());
+      : _runAll(days);
+}
+
+_runAll(List<GenericDay> days) {
+  final stopwatch = Stopwatch()..start();
+
+  days.forEach((day) => day.printSolutions());
+
+  print('=> Ran everything in ${stopwatch.elapsed}');
 }
 
 void printHelper() {
