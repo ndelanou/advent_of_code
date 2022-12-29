@@ -1,101 +1,121 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 
 import '../utils/utils.dart';
+
+class Pos {
+  final int x, y;
+
+  Pos(this.x, this.y);
+
+  bool operator ==(Object? other) =>
+      other is Pos && x == other.x && y == other.y;
+
+  int get hashCode => Object.hash(x, y);
+
+  Pos operator+(Pos other) {
+    return Pos(x + other.x, y + other.y);
+  }
+}
 
 class Day23 extends GenericDay {
   Day23() : super(2022, 23);
 
   @override
-  Grid<_Elf?> parseInput() {
-    return Grid(input.getPerLine().map((l) => l.split('').map((c) => c == '#' ? _Elf() : null).toList()).toList());
+  List<_Elf> parseInput() {
+    return input.getPerLine().mapIndexed((y, line) => line.split('').mapIndexed((x, c) => c == '#' ? _Elf(Pos(x, y)) : null).whereNotNull()).expand((e) => e).toList();
+  }
+
+  Iterable<ScanDirection> scanDirectionsFromOffset(int fromIndex) sync* {
+    for (var i = 0; i < ScanDirection.values.length; i++) {
+      yield ScanDirection.values[(i + fromIndex) % ScanDirection.values.length];
+    }
+  }
+
+  List<Pos> adjacentOnDirection(ScanDirection direction) {
+    switch (direction) {
+      case ScanDirection.north:
+        return [
+          Pos(0 , -1),
+          Pos(1 , -1),
+          Pos(-1, -1),
+        ];
+      case ScanDirection.south:
+        return [
+          Pos(0 , 1),
+          Pos(1 , 1),
+          Pos(-1, 1),
+        ];
+      case ScanDirection.west:
+        return [
+          Pos(-1, 0 ),
+          Pos(-1, -1),
+          Pos(-1, 1 ),
+        ];
+      case ScanDirection.east:
+        return [
+          Pos(1,  0),
+          Pos(1,  1),
+          Pos(1, -1),
+        ];
+    }
+  }
+
+  processGeneration(List<_Elf> elfs, int index) {
+    final scanDirectionIndex = index % ScanDirection.values.length;
+    final scanDirections = scanDirectionsFromOffset(scanDirectionIndex);
+
+    final scanOffsets = scanDirections.map((dir) => adjacentOnDirection(dir)).toList();
+    final occupiedPositions = elfs.map((e) => e.pos).toSet();
+
+    // Compute proposed direction for each elf
+    elfs.forEach((elf) {
+      elf.evaluateDirection(occupiedPositions, scanOffsets);
+    });
+
+    elfs.forEach((elf) {
+      if (elf.proposedPosition != null && elfs.where((e) => e.proposedPosition == elf.proposedPosition).length <= 1) {
+        elf.pos = elf.proposedPosition!;
+      }
+    });
   }
 
   @override
   int solvePart1() {
-    final grid = parseInput();
-
-    final elfs = grid.rows.map((r) => r.where((e) => e != null).whereNotNull()).expand((element) => element).toList();
-    // grid.rows.forEach((r) { print(r.map((e) => e == null ? '.' : '#').join()); });
+    final elfs = parseInput();
     
     for (var i = 0; i < 10; i++) {
-      final startingDirectionIndex = i % ScanDirection.values.length;
+      processGeneration(elfs, i);
 
-      grid.forEach((x, y) {
-        final elf = grid.getValueAt(x, y);
-        if (elf != null) {
-          elf.evaluateDirection(grid, x, y, startingDirectionIndex);
-        }
-      });
-
-      grid.forEach((x, y) {
-        final elf = grid.getValueAt(x, y);
-        if (elf != null) {
-          if (elf.proposedPosition != null && elfs.where((e) => e.proposedPosition == elf.proposedPosition).length <= 1) {
-            grid.setValueAt(x, y, null);
-            grid.setValueAtPosition(elf.proposedPosition!, elf);
-          }
-        }
-      });
-
+      // Print elf grid
       // print('======== ${i + 1}');
-      // grid.rows.forEach((r) { print(r.map((e) => e == null ? '.' : '#').join()); });
+      // for (var x = 0; x < input.getPerLine().length; x++) {
+      //   print(Range(0, 14).iterable.map((y) => elfs.firstWhereOrNull((e) => e.pos == Pos(x, y))?.toString() ?? '.').join());
+      // }
+    }
+    
+    final allX = elfs.map((e) => e.pos.x);
+    final allY = elfs.map((e) => e.pos.y);
+
+    int minX = allX.min, maxX = allX.max;
+    int minY = allY.min, maxY = allY.max;
+
+    final elfsPositions = elfs.map((e) => e.pos).toSet();
+    int count = 0;
+    for (var x = minX; x <= maxX; x++) {
+      for (var y = minY; y <= maxY; y++) {
+        if (!elfsPositions.contains(Pos(x, y))) count++;
+      } 
     }
 
-    int minX = grid.width, maxX = 0;
-    int minY = grid.height, maxY = 0;
-
-    grid.forEach((x, y) {
-      if (grid.getValueAt(x, y) != null) {
-        minX = min(minX, x);
-        maxX = max(maxX, x);
-        minY = min(minY, y);
-        maxY = max(maxY, y);
-      }
-    });
-
-    int count = 0;
-    grid.forEach((x, y) { 
-      if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
-        if (grid.getValueAt(x, y) == null) count++;
-      }
-    });
-
-    return count; // 2557
+    return count; // 3996
   }
 
   @override
   int solvePart2() {
-    final grid = parseInput();
+    final elfs = parseInput();
 
-    final elfs = grid.rows.map((r) => r.where((e) => e != null).whereNotNull()).expand((element) => element).toList();
-    // grid.rows.forEach((r) { print(r.map((e) => e == null ? '.' : '#').join()); });
-    
-    for (var i = 0; i < 100000; i++) {
-      final startingDirectionIndex = i % ScanDirection.values.length;
-
-      grid.forEach((x, y) {
-        final elf = grid.getValueAt(x, y);
-        if (elf != null) {
-          elf.evaluateDirection(grid, x, y, startingDirectionIndex);
-        }
-      });
-
-      grid.forEach((x, y) {
-        final elf = grid.getValueAt(x, y);
-        if (elf != null) {
-          if (elf.proposedPosition != null && elfs.where((e) => e.proposedPosition == elf.proposedPosition).length <= 1) {
-            grid.setValueAt(x, y, null);
-            grid.setValueAtPosition(elf.proposedPosition!, elf);
-          }
-        }
-      });
-
-      if (i % 10 == 0) {
-        // print('======== ${i + 1}');
-        // grid.rows.forEach((r) { print(r.map((e) => e == null ? '.' : '#').join()); }); 
-      }
+    for (var i = 0; i < 10000; i++) {
+      processGeneration(elfs, i);
 
       if (elfs.every((e) => e.proposedPosition == null)) {
         return i + 1;
@@ -107,14 +127,15 @@ class Day23 extends GenericDay {
 }
 
 class _Elf {
-  @override
-  String toString() => '#';
 
-  Position? proposedPosition;
+  Pos pos;
+  Pos? proposedPosition;
 
-  evaluateDirection(Grid<_Elf?> grid, int x, int y, int startingDirectionIndex) {
-    final moves = _scanDirections(startingDirectionIndex).map((d) => grid.adjacentOnDirection(x, y, d)).where((ms) => ms.isNotEmpty);
-    final moveDirection = moves.where((m) => m.every((p) => grid.isOnGrid(p) && grid.getValueAtPosition(p) == null));
+  _Elf(this.pos);
+
+  evaluateDirection(Set<Pos> occupiedPositions, List<List<Pos>> scanOffsets) {
+    final moves = scanOffsets.map((dirs) => dirs.map((p) => p + pos));
+    final moveDirection = moves.where((m) => m.every((p) => !occupiedPositions.contains(p)));
 
     // No possible move or all possible moves
     if (moveDirection.isEmpty || moveDirection.length == moves.length) {
@@ -124,53 +145,12 @@ class _Elf {
     }
   }
 
-  Iterable<ScanDirection> _scanDirections(int fromIndex) sync* {
-    for (var i = 0; i < ScanDirection.values.length; i++) {
-      yield ScanDirection.values[(i + fromIndex) % ScanDirection.values.length];
-    }
-  }
+  @override
+  String toString() => '#';
 }
 
 enum ScanDirection { north, south, west, east }
 
-extension GridExt on Grid {
-  Iterable<Position> adjacentOnDirection(int x,  int y, ScanDirection direction) {
-
-    final List<Position> positions;
-    switch (direction) {
-      case ScanDirection.north:
-        positions = [
-          Position(x, y - 1),
-          Position(x + 1, y - 1),
-          Position(x - 1, y - 1),
-        ];
-        break;
-      case ScanDirection.south:
-        positions = [
-          Position(x, y + 1),
-          Position(x + 1, y + 1),
-          Position(x - 1, y + 1),
-        ];
-        break;
-      case ScanDirection.west:
-        positions = [
-          Position(x - 1, y),
-          Position(x - 1, y - 1),
-          Position(x - 1, y + 1),
-        ];
-        break;
-      case ScanDirection.east:
-        positions = [
-          Position(x + 1, y),
-          Position(x + 1, y + 1),
-          Position(x + 1, y - 1),
-        ];
-        break;
-      
-    }
-    
-    return positions.where(
-        (pos) => pos.x >= 0 && pos.y >= 0 && pos.x < width && pos.y <= height);
-
-  }
+void main(List<String> args) {
+  Day23().printSolutions();
 }

@@ -7,6 +7,11 @@ typedef Position = Tuple2<int, int>;
 
 extension PositionExtension on Position {
   Position moved(int dx, int dy) => Position(this.x + dx, this.y + dy);
+
+  Position operator+(Object? other) {
+    assert(other is Position);
+    return Position((other as Position).x + x, other.y + y);
+  }
 }
 
 typedef VoidGridCallback = void Function(int x, int y);
