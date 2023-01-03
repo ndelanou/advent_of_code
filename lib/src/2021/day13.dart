@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:advent_of_code/src/2022/day23.dart';
 import 'package:collection/collection.dart';
 
 import '../utils/utils.dart';

@@ -9,7 +9,9 @@ class Day12 extends GenericDay {
   List<Tuple2<String, String>> parseInput() {
     return input
         .getPerLine()
-        .map((l) => Tuple2<String, String>.fromList(l.split('-')))
+        .map(
+          (l) => Tuple2<String, String>.fromList(l.split('-')),
+        )
         .toList();
   }
 
@@ -50,7 +52,6 @@ class Day12 extends GenericDay {
       if (c.item2 == cave && c.item1 != 'start') yield c.item1;
     }
   }
-
 }
 
 final _a = 'a'.codeUnits.first;
