@@ -5,12 +5,12 @@ typedef ConnectionDistance<T> = (T from, num distance);
 
 abstract class Dijkstra {
 
-  static (Iterable<T> path, num weightSum) findPathFromPairs<T>(Iterable<Connection<T>> entries, { required T start, required T end }) {
+  static (Iterable<T> path, num weightSum) findPathFromPairs<T>(List<Connection<T>> entries, { required T start, required T end }) {
     final graph = entries.groupFoldBy<T, List<ConnectionDistance<T>>>((e) => e.$0, (prev, e) => ((prev ?? [])..add((e.$1, e.$2))));
     return findPathFromGraph(graph, start: start, end: end);
   }
 
-  static (Iterable<T> path, num weightSum) findPathFromGraph<T>(Map<T, Iterable<ConnectionDistance<T>>> graph, { required T start, required T end }) {
+  static (Iterable<T> path, num weightSum) findPathFromGraph<T>(Map<T, List<ConnectionDistance<T>>> graph, { required T start, required T end }) {
     final dist = <T, num>{start: 0};
     final prev = <T, T>{};
     final queue = PriorityQueue<T>((w1, w2) => (dist[w1] ?? double.infinity).compareTo(dist[w2] ?? double.infinity))..add(start);
