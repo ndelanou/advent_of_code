@@ -4,13 +4,12 @@ typedef Connection<T> = (T from, T to, num weight);
 typedef ConnectionDistance<T> = (T from, num distance);
 
 abstract class Dijkstra {
-
-  static (Iterable<T> path, num weightSum) findPathFromPairs<T>(List<Connection<T>> entries, { required T start, required T end }) {
-    final graph = entries.groupFoldBy<T, List<ConnectionDistance<T>>>((e) => e.$0, (prev, e) => ((prev ?? [])..add((e.$1, e.$2))));
+  static (Iterable<T> path, num weightSum) findPathFromPairs<T>(List<Connection<T>> entries, {required T start, required T end}) {
+    final graph = entries.groupFoldBy<T, List<ConnectionDistance<T>>>((e) => e.$1, (prev, e) => ((prev ?? [])..add((e.$2, e.$3))));
     return findPathFromGraph(graph, start: start, end: end);
   }
 
-  static (Iterable<T> path, num weightSum) findPathFromGraph<T>(Map<T, List<ConnectionDistance<T>>> graph, { required T start, required T end }) {
+  static (Iterable<T> path, num weightSum) findPathFromGraph<T>(Map<T, List<ConnectionDistance<T>>> graph, {required T start, required T end}) {
     final dist = <T, num>{start: 0};
     final prev = <T, T>{};
     final queue = PriorityQueue<T>((w1, w2) => (dist[w1] ?? double.infinity).compareTo(dist[w2] ?? double.infinity))..add(start);
@@ -18,10 +17,9 @@ abstract class Dijkstra {
     while (queue.isNotEmpty) {
       var current = queue.removeFirst();
       if (current != end) {
-        
         for (final vertex in graph[current] ?? <ConnectionDistance<T>>[]) {
-          final neighbor = vertex.$0;
-          final weight = vertex.$1;
+          final neighbor = vertex.$1;
+          final weight = vertex.$2;
           final score = dist[current]! + weight;
           if (score < (dist[neighbor] ?? double.infinity)) {
             dist[neighbor] = score;
@@ -29,9 +27,9 @@ abstract class Dijkstra {
             queue.add(neighbor);
           }
         }
-      } else  {
+      } else {
         // Reconstruct the path in reverse.
-       final path = [current];
+        final path = [current];
         while (prev.keys.contains(current)) {
           current = prev[current] as T;
           path.insert(0, current);
@@ -41,7 +39,6 @@ abstract class Dijkstra {
     }
     return ([], -1);
   }
-  
 }
 
 // void test(List<String> args) {
