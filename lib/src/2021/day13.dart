@@ -16,7 +16,7 @@ class Day13 extends GenericDay {
       final s = l.split(',');
       return Pos(int.parse(s.first), int.parse(s.last));
     }).toSet();
-    
+
     final instructions = (splits.last..removeAt(0)).map((s) {
       final equalSplit = s.split('=');
       return (equalSplit.first.split('').last, int.parse(equalSplit.last));
@@ -40,7 +40,7 @@ class Day13 extends GenericDay {
         } else {
           tmp.add(Pos(p.x, index - (index - p.y).abs()));
         }
-      } 
+      }
     }
 
     return tmp;
@@ -48,23 +48,19 @@ class Day13 extends GenericDay {
 
   @override
   solvePart1() {
-    final data = parseInput();
-    final points = data.$0;
-    final instructions = data.$1;
+    final (points, instructions) = parseInput();
 
-    final newPoints = fold(points, instructions.first.$0, instructions.first.$1);
-    
+    final newPoints = fold(points, instructions.first.$1, instructions.first.$2);
+
     return newPoints.length;
   }
 
   @override
   solvePart2() {
-    final data = parseInput();
-    var points = data.$0;
-    final instructions = data.$1;
+    var (points, instructions) = parseInput();
 
     for (var instr in instructions) {
-      points = fold(points, instr.$0, instr.$1);
+      points = fold(points, instr.$1, instr.$2);
     }
 
     printPoints(points);

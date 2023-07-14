@@ -22,14 +22,12 @@ class Day16 extends GenericDay {
 
   Map<String, Map<String, int>> computeDistances(List<Valve> valves, String start) {
     Map<String, Map<String, int>> distances = {};
-    final graph = valves
-      .map((v) => v.connections.map((c) => (v.name, c, 1)))
-      .expand((e) => e).toSet().toList();
+    final graph = valves.map((v) => v.connections.map((c) => (v.name, c, 1))).expand((e) => e).toSet().toList();
 
     Iterable<Valve> interestingValves = valves.where((v) => v.rate != 0 || v.name == start);
     for (final valve in interestingValves) {
       for (var target in interestingValves) {
-        final d = Dijkstra.findPathFromPairs(graph, start: valve.name, end: target.name).$0.length;
+        final d = Dijkstra.findPathFromPairs(graph, start: valve.name, end: target.name).$1.length;
         if (!distances.containsKey(valve.name)) distances[valve.name] = Map();
         distances[valve.name]![target.name] = d;
       }
@@ -46,7 +44,6 @@ class Day16 extends GenericDay {
     final bestScore = findBestScore(distances, 'AA', interestingValves, 30);
     return bestScore; // 1559 (1651)
   }
-  
 
   @override
   int solvePart2() {
@@ -60,17 +57,18 @@ class Day16 extends GenericDay {
 
 int findBestScore(Map<String, Map<String, int>> graph, String currentValve, Iterable<Valve> valves, int remainingTime) {
   return valves.map((end) {
-    final distance = graph[currentValve]![end.name]!;
-    final valveOpenMinutes = remainingTime - distance;
-    final score = valveOpenMinutes * end.rate;
+        final distance = graph[currentValve]![end.name]!;
+        final valveOpenMinutes = remainingTime - distance;
+        final score = valveOpenMinutes * end.rate;
 
-    if (distance <= remainingTime) {
-      final target = end.name;
-      return score + findBestScore(graph, target, valves.where((v) => v.name != target).toList(), remainingTime - distance);
-    } else {
-      return 0;
-    }
-  }).maxOrNull ?? 0;
+        if (distance <= remainingTime) {
+          final target = end.name;
+          return score + findBestScore(graph, target, valves.where((v) => v.name != target).toList(), remainingTime - distance);
+        } else {
+          return 0;
+        }
+      }).maxOrNull ??
+      0;
 }
 
 final Map<String, int> cache = {};
@@ -85,18 +83,20 @@ int findBestScoreWithMyElephantBuddy(Map<String, Map<String, int>> graph, String
   int bestScore = findBestScore(graph, initial, availableValves, 26);
 
   final rec = availableValves.map((v) {
-    final dist = graph[currentValve]![v.name]!;
-    final newRemainingTime = remainingTime - dist;
-    if (newRemainingTime >= 0) {
-      return v.rate * newRemainingTime + findBestScoreWithMyElephantBuddy(graph, initial, v.name, availableValves, newRemainingTime);
-    }
-    return 0;
-  }).maxOrNull ?? 0;
+        final dist = graph[currentValve]![v.name]!;
+        final newRemainingTime = remainingTime - dist;
+        if (newRemainingTime >= 0) {
+          return v.rate * newRemainingTime + findBestScoreWithMyElephantBuddy(graph, initial, v.name, availableValves, newRemainingTime);
+        }
+        return 0;
+      }).maxOrNull ??
+      0;
 
   bestScore = max(bestScore, rec);
   cache[cacheKey] = bestScore;
   return bestScore;
 }
+
 class Valve {
   final String name;
   final int rate;

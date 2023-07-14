@@ -19,10 +19,10 @@ class Day15 extends GenericDay {
     grid.forEach((x, y) {
       final neighbours = grid.adjacent(x, y);
       final graphValues = neighbours.map((n) => (n, grid.getValueAtPosition(n))).toList();
-      graph[Position(x,y)] = graphValues;
+      graph[Position(x, y)] = graphValues;
     });
     final bestPath = Dijkstra.findPathFromGraph(graph, start: Position(0, 0), end: Position(grid.width - 1, grid.height - 1));
-    return bestPath.$1;
+    return bestPath.$2;
   }
 
   @override
@@ -32,18 +32,31 @@ class Day15 extends GenericDay {
     grid.forEach((x, y) {
       final neighbours = grid.adjacent(x, y);
       final graphValues = neighbours.map((n) => (n, grid.getValueAtPosition(n))).toList();
-      graph[Position(x,y)] = graphValues;
+      graph[Position(x, y)] = graphValues;
     });
     final bestPath = Dijkstra.findPathFromGraph(graph, start: Position(0, 0), end: Position(grid.width - 1, grid.height - 1));
-    return bestPath.$1;
+    return bestPath.$2;
   }
 
   Grid<int> buildGridPart2() {
     final lines = input.getPerLine();
     final origin = lines.map((l) => l.split('').map((c) => int.parse(c)).toList()).toList();
-    final expandedW = origin.map((l) => [...l, ...l.map((n) => n+1), ...l.map((n) => n+2), ...l.map((n) => n+3), ...l.map((n) => n+4)]).toList();
-    final expandedH = [...expandedW, ...expandedW.map((n) => n.map((nn) => nn + 1)), ...expandedW.map((n) => n.map((nn) => nn + 2)), ...expandedW.map((n) => n.map((nn) => nn + 3)), ...expandedW.map((n) => n.map((nn) => nn + 4)),];
-    final normalized = expandedH.map((l) => l.map((n) { if (n > 9) return n - 9; else return n;}).toList()).toList();
+    final expandedW = origin.map((l) => [...l, ...l.map((n) => n + 1), ...l.map((n) => n + 2), ...l.map((n) => n + 3), ...l.map((n) => n + 4)]).toList();
+    final expandedH = [
+      ...expandedW,
+      ...expandedW.map((n) => n.map((nn) => nn + 1)),
+      ...expandedW.map((n) => n.map((nn) => nn + 2)),
+      ...expandedW.map((n) => n.map((nn) => nn + 3)),
+      ...expandedW.map((n) => n.map((nn) => nn + 4)),
+    ];
+    final normalized = expandedH
+        .map((l) => l.map((n) {
+              if (n > 9)
+                return n - 9;
+              else
+                return n;
+            }).toList())
+        .toList();
     return Grid(normalized);
   }
 }

@@ -8,7 +8,7 @@ class Day22 extends GenericDay {
   Day22() : super(2022, 22);
 
   @override
-  Tuple2<Grid<String>, List> parseInput() {
+  (Grid<String>, List) parseInput() {
     final lines = input.getPerLine();
     final grid = Grid(lines.take(lines.length - 2).map((e) => e.split('').toList()).toList());
     final instructions = [];
@@ -27,7 +27,7 @@ class Day22 extends GenericDay {
     if (tmp.isNotEmpty) {
       instructions.add(int.parse(tmp));
     }
-    return Tuple2(grid, instructions);
+    return (grid, instructions);
   }
 
   final _a = 'A'.codeUnits.first;
@@ -37,9 +37,7 @@ class Day22 extends GenericDay {
 
   @override
   int solvePart1() {
-    final inputResult = parseInput();
-    final grid = inputResult.item1;
-    final instructions = inputResult.item2;
+    final (grid, instructions) = parseInput();
 
     Position currentPosition = Position(grid.rows.first.toList().indexOf('.'), 0);
     int facingIndex = 0;
@@ -64,14 +62,14 @@ class Day22 extends GenericDay {
         }
       }
     }
-    
+
     return 1000 * (currentPosition.y + 1) + 4 * (currentPosition.x + 1) + facingIndex;
   }
 
   Position wrap(Grid grid, Position currentPosition, Position facing) {
     final opositeFacing = Position(-facing.x, -facing.y);
     Position wrapPosition = currentPosition.moved(opositeFacing.x, opositeFacing.y);
-    while(grid.isOnGrid(wrapPosition) && grid.getValueAtPosition(wrapPosition) != ' ') {
+    while (grid.isOnGrid(wrapPosition) && grid.getValueAtPosition(wrapPosition) != ' ') {
       wrapPosition = wrapPosition.moved(opositeFacing.x, opositeFacing.y);
     }
     return wrapPosition.moved(facing.x, facing.y);
@@ -79,9 +77,7 @@ class Day22 extends GenericDay {
 
   @override
   int solvePart2() {
-    final inputResult = parseInput();
-    final grid = inputResult.item1;
-    final instructions = inputResult.item2;
+    final (grid, instructions) = parseInput();
 
     final cubeFaces = getCubeFaces(grid);
 
@@ -112,15 +108,15 @@ class Day22 extends GenericDay {
         }
       }
     }
-    
+
     return 1000 * (currentPosition.y + 1) + 4 * (currentPosition.x + 1) + facingIndex; // ??? | 171035
   }
 
   List<_Face> getCubeFaces(Grid grid) {
     final tmp = <_Face>[];
     final faceSize = grid.height == 200 ? 50 : 4;
-    for (var y = 0; y < grid.height; y+=faceSize) {
-      for (var x = 0; x < grid.width; x+=faceSize) {
+    for (var y = 0; y < grid.height; y += faceSize) {
+      for (var x = 0; x < grid.width; x += faceSize) {
         final pos = Position(x, y);
         if (grid.getValueAtPosition(pos) != ' ') {
           tmp.add(Tuple2(pos, Position(pos.x + faceSize - 1, pos.y + faceSize - 1)));
@@ -131,19 +127,18 @@ class Day22 extends GenericDay {
     return tmp;
   }
 
-
   Tuple2<Position, int> wrapCube(Position currentPosition, int facingIndex, List<_Face> faces) {
     final startingFaceIndex = faces.indexWhere((c) => c.item1.x <= currentPosition.x && c.item1.y <= currentPosition.y && c.item2.x >= currentPosition.x && c.item2.y >= currentPosition.y);
     final startingFace = faces[startingFaceIndex];
 
-    final adjFace =  hardCodedFacesInput[startingFaceIndex]![facingIndex];
+    final adjFace = hardCodedFacesInput[startingFaceIndex]![facingIndex];
     final relativePos = Position(currentPosition.x - startingFace.item1.x, currentPosition.y - startingFace.item1.y);
     final newFacing = adjFace.item2;
     final newFacingIndex = facings.indexOf(newFacing);
     final newFace = faces[adjFace.item1];
 
     final faceSize = newFace.item2.x - newFace.item1.x;
-    int i; 
+    int i;
     if (facingIndex == 0) {
       if (newFacingIndex == 1 || newFacingIndex == 2) {
         i = faceSize - relativePos.y;
@@ -262,6 +257,4 @@ class Day22 extends GenericDay {
       Tuple2(3, Position(0, -1)),
     ],
   };
-
 }
-

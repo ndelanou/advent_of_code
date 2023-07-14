@@ -18,9 +18,7 @@ class Day14 extends GenericDay {
 
   @override
   solvePart1() {
-    final data = parseInput();
-    final template = data.$0;
-    final mapping = data.$1;
+    final (template, mapping) = parseInput();
 
     List<int> polymer = template.codeUnits;
     for (var i = 0; i < 10; i++) {
@@ -35,38 +33,36 @@ class Day14 extends GenericDay {
   Iterable<int> processPolymer(List<int> polymer, Map<(int, int), int> mapping) sync* {
     yield polymer.first;
     for (var i = 1; i < polymer.length; i++) {
-      final mappingKey = (polymer[i-1], polymer[i]);
+      final mappingKey = (polymer[i - 1], polymer[i]);
       final inserted = mapping[mappingKey]!;
-      yield* [inserted, mappingKey.$1];
+      yield* [inserted, mappingKey.$2];
     }
   }
-  
+
   Map<(int, int), int> processPolymerV2(Map<(int, int), int> pairs, Map<(int, int), int> mapping) {
     final Map<(int, int), int> tmp = {};
     pairs.forEach((pair, count) {
       final inserted = mapping[pair]!;
-      final left = (pair.$0, inserted);
-      final right = (inserted, pair.$1);
+      final left = (pair.$1, inserted);
+      final right = (inserted, pair.$2);
       tmp.update(left, (value) => value + count, ifAbsent: () => count);
       tmp.update(right, (value) => value + count, ifAbsent: () => count);
     });
-    
+
     return tmp;
   }
 
   Map<(int, int), int> polymerToPairs(List<int> polymer) {
     final tmp = <(int, int), int>{};
     for (var i = 1; i < polymer.length; i++) {
-      tmp.update((polymer[i-1], polymer[i]), (value) => value + 1, ifAbsent: () => 1);
+      tmp.update((polymer[i - 1], polymer[i]), (value) => value + 1, ifAbsent: () => 1);
     }
     return tmp;
   }
 
   @override
   solvePart2() {
-    final data = parseInput();
-    final template = data.$0;
-    final mapping = data.$1;
+    final (template, mapping) = parseInput();
 
     final basePolymer = template.codeUnits;
     Map<(int, int), int> pairs = polymerToPairs(basePolymer);
@@ -82,7 +78,7 @@ class Day14 extends GenericDay {
   Map<int, int> occurencesPerLetter(Map<(int, int), int> pairs, List<int> basePolymer) {
     final tmp = <int, int>{};
     pairs.forEach((key, value) {
-      tmp.update(key.$0, (prev) => prev + value, ifAbsent: () => value);
+      tmp.update(key.$1, (prev) => prev + value, ifAbsent: () => value);
     });
     tmp.update(basePolymer.last, (value) => value + 1, ifAbsent: () => 1);
     return tmp;

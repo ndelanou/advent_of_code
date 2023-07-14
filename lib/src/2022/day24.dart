@@ -8,18 +8,16 @@ class Day24 extends GenericDay {
   Day24() : super(2022, 24);
 
   @override
-  Tuple2<Position, List<Blizzard>> parseInput() {
+  (Position, List<Blizzard>) parseInput() {
     final lines = input.getPerLine();
-    final blizzards = lines.mapIndexed(
-      (y, l) => l.split('').mapIndexed((x, e) => (e == '.' || e == '#') ? null : Blizzard(Position(x, y), Blizzard.directionFromString(e))).whereNotNull().toList()
-    ).expand((element) => element);
-    return Tuple2(Position(lines.first.length, lines.length), blizzards.toList());
+    final blizzards = lines
+        .mapIndexed((y, l) => l.split('').mapIndexed((x, e) => (e == '.' || e == '#') ? null : Blizzard(Position(x, y), Blizzard.directionFromString(e))).whereNotNull().toList())
+        .expand((element) => element);
+    return (Position(lines.first.length, lines.length), blizzards.toList());
   }
 
   int solvePart1() {
-    final data = parseInput();
-    final gridDimension = data.item1;
-    final initialBlizzards = data.item2;
+    final (gridDimension, initialBlizzards) = parseInput();
 
     final start = Position(1, 0);
     final end = Position(gridDimension.x - 2, gridDimension.y - 1);
@@ -51,21 +49,13 @@ class Day24 extends GenericDay {
       Position(position.x, position.y + 1),
       Position(position.x - 1, position.y),
     ].where((pos) {
-      return (
-          (
-            pos.x >= 1 && pos.y >= 1 && pos.x < gridDimension.x - 1 && pos.y < gridDimension.y - 1
-          ) || (
-            pos == start || pos == end
-          )
-        ) && nextBlizzards.every((b) => b.position != pos);
+      return ((pos.x >= 1 && pos.y >= 1 && pos.x < gridDimension.x - 1 && pos.y < gridDimension.y - 1) || (pos == start || pos == end)) && nextBlizzards.every((b) => b.position != pos);
     });
   }
 
   @override
   int solvePart2() {
-    final data = parseInput();
-    final gridDimension = data.item1;
-    final initialBlizzards = data.item2;
+    final (gridDimension, initialBlizzards) = parseInput();
 
     final start = Position(1, 0);
     final end = Position(gridDimension.x - 2, gridDimension.y - 1);
@@ -75,26 +65,23 @@ class Day24 extends GenericDay {
 
     return result1.item1 + result2.item1 + result3.item1;
   }
-
 }
 
 class Day24Dijkstra extends GenericDay {
   Day24Dijkstra() : super(2022, 24);
 
   @override
-  Tuple2<Position, List<Blizzard>> parseInput() {
+  (Position, List<Blizzard>) parseInput() {
     final lines = input.getPerLine();
-    final blizzards = lines.mapIndexed(
-      (y, l) => l.split('').mapIndexed((x, e) => (e == '.' || e == '#') ? null : Blizzard(Position(x, y), Blizzard.directionFromString(e))).whereNotNull().toList()
-    ).expand((element) => element);
-    return Tuple2(Position(lines.first.length, lines.length), blizzards.toList());
+    final blizzards = lines
+        .mapIndexed((y, l) => l.split('').mapIndexed((x, e) => (e == '.' || e == '#') ? null : Blizzard(Position(x, y), Blizzard.directionFromString(e))).whereNotNull().toList())
+        .expand((element) => element);
+    return (Position(lines.first.length, lines.length), blizzards.toList());
   }
 
   @override
   int solvePart1() {
-    final data = parseInput();
-    final gridDimension = data.item1;
-    final initialBlizzards = data.item2;
+    final (gridDimension, initialBlizzards) = parseInput();
 
     final start = Position(1, 0);
     final end = Position(gridDimension.x - 2, gridDimension.y - 1);
@@ -103,12 +90,11 @@ class Day24Dijkstra extends GenericDay {
     return bestPathLength.item1;
   }
 
-
   Tuple2<int, List<Blizzard>> findBestPathLength(Tuple2<int, int> gridDimension, List<Blizzard> initialBlizzards, Position start, Position end) {
     final paths = dBuildPathMap(300, gridDimension, initialBlizzards, start, end).toList();
-    final oneWayGraph = paths.groupFoldBy<String, List<(String, int)>>((p) => p.first, (agg, p) => (agg ?? [])..add((p.last, 1))); 
+    final oneWayGraph = paths.groupFoldBy<String, List<(String, int)>>((p) => p.first, (agg, p) => (agg ?? [])..add((p.last, 1)));
     final bestPath = Dijkstra.findPathFromGraph(oneWayGraph, start: 'start', end: 'end');
-    final bestPathLength = bestPath.$0.length - 1;
+    final bestPathLength = bestPath.$1.length - 1;
     return Tuple2(bestPathLength, blizzardAfter(bestPathLength, initialBlizzards, gridDimension));
   }
 
@@ -120,9 +106,7 @@ class Day24Dijkstra extends GenericDay {
     return currentBlizzards;
   }
 
-
   Iterable<List<String>> dBuildPathMap(int iterations, Tuple2<int, int> gridDimension, List<Blizzard> initialBlizzards, Position start, Position end) sync* {
-    
     List<Blizzard> currentBlizzards = initialBlizzards;
     for (var i = 0; i < iterations; i++) {
       final nextBlizzards = currentBlizzards.map((b) => b.nextPosition(gridDimension)).toList();
@@ -130,8 +114,16 @@ class Day24Dijkstra extends GenericDay {
       final availablePositions = dAllGridPositions(gridDimension, currentBlizzards, start, end);
       final availableMoves = availablePositions.map((p) => possibleTargets(p, gridDimension, nextBlizzards, start, end).map((t) => Tuple2(p, t))).expand((m) => m);
       final pathPairs = availableMoves.map((e) {
-        final from = e.item1 == start ? '${i == 0 ? '' : '$i-'}start' : e.item1 == end ? 'end' : '$i-${e.item1.x}-${e.item1.y}';
-        final to = e.item2 == start ? '${i+1}-start' : e.item2 == end ? 'end' : '${i+1}-${e.item2.x}-${e.item2.y}';
+        final from = e.item1 == start
+            ? '${i == 0 ? '' : '$i-'}start'
+            : e.item1 == end
+                ? 'end'
+                : '$i-${e.item1.x}-${e.item1.y}';
+        final to = e.item2 == start
+            ? '${i + 1}-start'
+            : e.item2 == end
+                ? 'end'
+                : '${i + 1}-${e.item2.x}-${e.item2.y}';
         return [from, to];
       });
       yield* pathPairs;
@@ -147,10 +139,9 @@ class Day24Dijkstra extends GenericDay {
         if (!currentBlizzards.any((b) => b.position == pos)) {
           yield pos;
         }
-      } 
+      }
     }
   }
-
 
   // Returns all filterd possible positions for position
   Iterable<Position> possibleTargets(Position position, Tuple2<int, int> gridDimension, List<Blizzard> nextBlizzards, Position start, Position end) sync* {
@@ -161,21 +152,13 @@ class Day24Dijkstra extends GenericDay {
       Position(position.x, position.y + 1),
       Position(position.x - 1, position.y),
     ].where((pos) {
-      return (
-          (
-            pos.x >= 1 && pos.y >= 1 && pos.x < gridDimension.x - 1 && pos.y < gridDimension.y - 1
-          ) || (
-            pos == start || pos == end
-          )
-        ) && nextBlizzards.every((b) => b.position != pos);
+      return ((pos.x >= 1 && pos.y >= 1 && pos.x < gridDimension.x - 1 && pos.y < gridDimension.y - 1) || (pos == start || pos == end)) && nextBlizzards.every((b) => b.position != pos);
     });
   }
 
   @override
   int solvePart2() {
-    final data = parseInput();
-    final gridDimension = data.item1;
-    final initialBlizzards = data.item2;
+    final (gridDimension, initialBlizzards) = parseInput();
 
     final start = Position(1, 0);
     final end = Position(gridDimension.x - 2, gridDimension.y - 1);
@@ -185,13 +168,12 @@ class Day24Dijkstra extends GenericDay {
 
     return result1.item1 + result2.item1 + result3.item1;
   }
-
 }
 
 extension PositionExtension on Position {
   int distance(Position other) {
     return (this.x - other.x).abs() + (this.y - other.y).abs();
-  }    
+  }
 }
 
 extension ListExtension<T> on List<T> {
@@ -219,14 +201,14 @@ class Blizzard {
     return Blizzard(Position(newX, newY), direction);
   }
 
-  static const _directions = [ 
-    Position(1, 0), 
-    Position(0, 1), 
-    Position(-1, 0), 
+  static const _directions = [
+    Position(1, 0),
+    Position(0, 1),
+    Position(-1, 0),
     Position(0, -1),
   ];
 
-  static const _directionChars = [ 
+  static const _directionChars = [
     '>',
     'v',
     '<',

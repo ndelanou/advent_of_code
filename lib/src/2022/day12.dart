@@ -39,22 +39,19 @@ class Day12 extends GenericDay {
     final graphInput = links.map((l) => (l.start, l.end, 1)).toList();
     final dResult = Dijkstra.findPathFromPairs(graphInput, start: start, end: end);
 
-    return dResult.$0.length - 1;
+    return dResult.$1.length - 1;
   }
-  
-  explore(Grid<int> grid) {
 
+  explore(Grid<int> grid) {
     Set<Link> links = {};
 
     grid.forEach((x, y) {
-      final possibleMoves = grid
-        .adjacent(x, y)
-        .where((move) {
-          final diff = grid.grid[move.y][move.x] - grid.grid[y][x];
-          return (grid.grid[move.y][move.x] >= a) && (diff <= 1);
-        }).toList();
-      
-      final addedLinks = possibleMoves.map((move) => Link(Position(x,y), move)).toList();
+      final possibleMoves = grid.adjacent(x, y).where((move) {
+        final diff = grid.grid[move.y][move.x] - grid.grid[y][x];
+        return (grid.grid[move.y][move.x] >= a) && (diff <= 1);
+      }).toList();
+
+      final addedLinks = possibleMoves.map((move) => Link(Position(x, y), move)).toList();
       links.addAll(addedLinks);
     });
 
@@ -84,14 +81,12 @@ class Day12 extends GenericDay {
 
     final allAPositions = <Position>[];
     grid.forEach((x, y) {
-      if (grid.getValueAtPosition(Position(x,y)) == a) allAPositions.add(Position(x,y));
+      if (grid.getValueAtPosition(Position(x, y)) == a) allAPositions.add(Position(x, y));
     });
 
-    final allResults = allAPositions
-      .map((currentA) => Dijkstra.findPathFromGraph(graphInput, start: currentA, end: end))
-      .where((element) => element.$0.isNotEmpty);
+    final allResults = allAPositions.map((currentA) => Dijkstra.findPathFromGraph(graphInput, start: currentA, end: end)).where((element) => element.$1.isNotEmpty);
 
-    final bestPath = allResults.map((r) => r.$0.length - 1).min;
+    final bestPath = allResults.map((r) => r.$1.length - 1).min;
 
     return bestPath;
   }
@@ -105,20 +100,16 @@ class Link {
 
   @override
   bool operator ==(Object other) {
-  if (other.runtimeType != runtimeType) {
-    return false;
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is Link && other.start.x == start.x && other.start.y == start.y && other.end.x == end.x && other.end.y == end.y;
   }
-  return other is Link
-      && other.start.x == start.x
-      && other.start.y == start.y
-      && other.end.x == end.x
-      && other.end.y == end.y;
-}
 
-@override
+  @override
   int get hashCode => Object.hash(start.hashCode, end.hashCode);
 
-@override
+  @override
   String toString() {
     return '(${start.x},${start.y})->(${end.x},${end.y})';
   }

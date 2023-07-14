@@ -1,4 +1,3 @@
-
 import 'package:collection/collection.dart';
 
 import '../utils/utils.dart';
@@ -13,7 +12,7 @@ class Day16 extends GenericDay {
     final data = binStr.split('').map((c) => c == '0' ? 0 : 1).toList();
 
     final parsed = Packet.parse(data, 0);
-    return parsed.$0;
+    return parsed.$1;
   }
 
   @override
@@ -44,15 +43,16 @@ class Packet {
     final headers = getHeaders(data.sublist(start, start + 6));
     int offset = 6;
 
-    if (headers.$1 == 4) { // literal value
+    if (headers.$2 == 4) {
+      // literal value
       final parsed = parseLiteralValue(data, start + offset);
-      offset += parsed.$1;
-      return (Packet(headers.$0, headers.$1, parsed.$0), offset);
-      
-    } else { // operator packet
+      offset += parsed.$2;
+      return (Packet(headers.$1, headers.$2, parsed.$1), offset);
+    } else {
+      // operator packet
       final parsed = parseOperatorPacket(data, start + offset);
-      offset += parsed.$1;
-      return (Packet(headers.$0, headers.$1, parsed.$0), offset);
+      offset += parsed.$2;
+      return (Packet(headers.$1, headers.$2, parsed.$1), offset);
     }
   }
 
@@ -81,18 +81,18 @@ class Packet {
       final length = int.parse(data.sublist(start + offset, start + offset + 15).join(), radix: 2);
       offset += 15;
       int startParseOffset = offset;
-      while (offset <startParseOffset + length) {
+      while (offset < startParseOffset + length) {
         final parsed = Packet.parse(data, start + offset);
-        offset += parsed.$1;
-        parsedValue.add(parsed.$0);
+        offset += parsed.$2;
+        parsedValue.add(parsed.$1);
       }
     } else {
       final length = int.parse(data.sublist(start + offset, start + offset + 11).join(), radix: 2);
       offset += 11;
       for (var i = 0; i < length; i++) {
         final parsed = Packet.parse(data, start + offset);
-        offset += parsed.$1;
-        parsedValue.add(parsed.$0);
+        offset += parsed.$2;
+        parsedValue.add(parsed.$1);
       }
     }
 
