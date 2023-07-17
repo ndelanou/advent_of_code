@@ -28,10 +28,6 @@ class Day16 extends GenericDay {
   }
 }
 
-void main(List<String> args) {
-  Day16().printSolutions();
-}
-
 class Packet {
   final int version;
   final int type;

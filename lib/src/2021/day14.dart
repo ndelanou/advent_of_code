@@ -84,7 +84,3 @@ class Day14 extends GenericDay {
     return tmp;
   }
 }
-
-void main(List<String> args) {
-  Day14().printSolutions();
-}

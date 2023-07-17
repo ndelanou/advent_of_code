@@ -43,7 +43,7 @@ class InputParser {
   }
 
   /// Splits the input String by given pattern.
-  List<String> getBy(String pattern) {
+  List<String> getBy(Pattern pattern) {
     return _inputAsString.split(pattern);
   }
 }

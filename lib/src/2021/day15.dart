@@ -60,7 +60,3 @@ class Day15 extends GenericDay {
     return Grid(normalized);
   }
 }
-
-void main(List<String> args) {
-  Day15().printSolutions();
-}

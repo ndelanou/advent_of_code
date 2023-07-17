@@ -177,7 +177,3 @@ extension on List {
     return this.map((e) => e is List ? e.deepCopy : e).toList();
   }
 }
-
-void main(List<String> args) {
-  Day18().printSolutions();
-}

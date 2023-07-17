@@ -83,7 +83,3 @@ class Day17 extends GenericDay {
     return validVelocities.length;
   }
 }
-
-void main(List<String> args) {
-  Day17().printSolutions();
-}
