@@ -9,9 +9,6 @@
             "request": "launch",
             "type": "dart",
             "program": "main.dart",
-            "toolArgs": [
-                "--enable-experiment=records",
-            ],
         },
 
         {
@@ -19,9 +16,6 @@
             "request": "launch",
             "type": "dart",
             "program": "${file}",
-            "toolArgs": [
-                "--enable-experiment=records",
-            ],
         },
     ]
 }
