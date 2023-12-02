@@ -64,12 +64,11 @@ Future<void> createDay({required String dayNumber, required String year}) async 
   // Create input file
   print('Loading input from adventofcode.com...');
   try {
-    final request = await HttpClient().getUrl(Uri.parse('https://adventofcode.com/$year/day/${int.parse(dayNumber)}/input'));
-    String session = String.fromEnvironment('AOC_SESSION');
+    final request = await HttpClient().getUrl(Uri.parse('https://adventofcode.com/2023/leaderboard/private/view/425912.json'));
+    final session = Platform.environment['AOC_SESSION']!;
     request.cookies.add(Cookie("session", session));
     final response = await request.close();
     final dataPath = 'input/$year/day$dayNumber.txt';
-    // unawaited(File(dataPath).create());
     response.pipe(File(dataPath).openWrite());
   } on Error catch (e) {
     print('Error loading file: $e');
