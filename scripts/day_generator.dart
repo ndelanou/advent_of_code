@@ -8,7 +8,7 @@ void main(List<String?> args) async {
 
   if (args.length > 1) {
     print('Please call with: <dayNumber>');
-    return;
+    exit(1);
   }
 
   String dayNumber;
@@ -19,7 +19,7 @@ void main(List<String?> args) async {
     final input = stdin.readLineSync();
     if (input == null) {
       print('No input given, exiting');
-      return;
+      exit(1);
     }
     // pad day number to have 2 digits
     dayNumber = int.parse(input).toString().padLeft(2, '0');
