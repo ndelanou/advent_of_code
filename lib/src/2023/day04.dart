@@ -52,16 +52,20 @@ class Day04 extends GenericDay {
     return cardCount;
   }
 
+  var _cache = <int, int>{};
+
   int _processCard(List<Card> cards, int cardIndex) {
     if (cardIndex >= cards.length) {
       return 0;
     }
+
+    if (_cache[cardIndex] case final cachedValue?) return cachedValue;
+
     final card = cards[cardIndex];
 
     int matches = 0;
     for (final number in card.myNumbers) {
       if (card.winningNumbers.contains(number)) {
-        // print('match $number');
         matches++;
       }
     }
@@ -70,6 +74,8 @@ class Day04 extends GenericDay {
     for (var i = 0; i < matches; i++) {
       cardCount += _processCard(cards, cardIndex + i + 1);
     }
+
+    _cache[cardIndex] = cardCount;
 
     return cardCount;
   }
