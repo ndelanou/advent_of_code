@@ -54,12 +54,12 @@ Future<void> createDay({required String dayNumber, required String year}) async 
   bool found = lines.any((line) => line.contains(dayFileName));
 
   // export new day in index file if not present
-  if (!found) {
-    exportFile.writeAsString(
-      content,
-      mode: FileMode.append,
-    );
-  }
+  // if (!found) {
+  //   exportFile.writeAsString(
+  //     content,
+  //     mode: FileMode.append,
+  //   );
+  // }
 
   // Create input file
   print('Loading input from adventofcode.com...');
