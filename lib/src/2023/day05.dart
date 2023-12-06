@@ -80,56 +80,34 @@ class Day05 extends GenericDay {
       seedRanges.add((from: offset, to: offset + count - 1));
     }
 
-    final locations = seedRanges.map((seedRange) {
-      int lowestLoc = 1000000000000000;
-      for (var seed = seedRange.from; seed <= seedRange.to; seed++) {
-        final loc = getSeedLocation(seed, converters: input.converters);
-        lowestLoc = min(lowestLoc, loc);
-      }
-      print('$seedRange -> $lowestLoc');
-      return lowestLoc;
-    }).toList();
+    final locationRanges = seedRanges.map((seedRange) => getSeedRangeLocations(seedRange, convertersMap: input.converters)).toList();
 
-    final minLocation = locations.reduce(min);
+    final minLocation = locationRanges.map((e) => e.map((e) => e.from).reduce(min)).reduce(min);
 
     return minLocation;
-
-    // final Set<SeedRange> seedRanges = {};
-    // for (var i = 0; i < input.seeds.length / 2; i++) {
-    //   final offset = input.seeds[i * 2];
-    //   final count = input.seeds[i * 2 + 1];
-    //   seedRanges.add((from: offset, to: offset + count - 1));
-    // }
-
-    // final locationRanges = seedRanges.map((seedRange) => getSeedRangeLocations(seedRange, converters: input.converters)).toList();
-
-    // final minLocation = locationRanges.map((e) => e.map((e) => e.from).reduce(min)).reduce(min);
-
-    // return minLocation;
   }
 
-  Set<SeedRange> getSeedRangeLocations(SeedRange seedRanges, {required Map<Converter, List<ConverteData>> converters}) {
+  Set<SeedRange> getSeedRangeLocations(SeedRange seedRanges, {required Map<Converter, List<ConverteData>> convertersMap}) {
     final destinations = ['soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location'];
 
     print('=====================');
 
-    Set<SeedRange> currentValue = {seedRanges};
+    Set<SeedRange> ranges = {seedRanges};
     String currentType = 'seed';
     for (final destination in destinations) {
-      print(currentValue);
-      currentValue = mapSourceToDestinationRanges(currentValue, currentType, destination, converters: converters);
+      print(ranges);
+      final converters = convertersMap[(from: currentType, to: destination)]!;
+      ranges = mapSourceToDestinationRanges(ranges, converters: converters).simplify().toSet();
       currentType = destination;
     }
 
-    return currentValue;
+    return ranges;
   }
 
-  Set<SeedRange> mapSourceToDestinationRanges(Set<SeedRange> value, String sourceType, String destinationType, {required Map<Converter, List<ConverteData>> converters}) {
-    final converterValues = converters[(from: sourceType, to: destinationType)]!;
-
+  Set<SeedRange> mapSourceToDestinationRanges(Set<SeedRange> value, {required List<ConverteData> converters}) {
     var newRanges = <SeedRange>{};
 
-    for (final converter in converterValues) {
+    for (final converter in converters) {
       final converterRange = (from: converter.source, to: converter.source + converter.range - 1);
       final converted = value.convertRange(converterRange, offset: converter.destination - converter.source);
       newRanges.addAll(converted);
@@ -187,4 +165,4 @@ void main(List<String> args) {
   Day05().printSolutions();
 }
 
-typedef SeedRange = ({int from, int to});
+typedef SeedRange = Range<int>;

@@ -13,11 +13,12 @@ class Day06 extends GenericDay {
       previousValue[element] = (previousValue[element] ?? 0) + 1;
       return previousValue;
     });
+
     fishes[9] = 0;
 
     for (var i = 0; i < days; i++) {
       final newFishes = fishes[0] ?? 0;
-      for (var key in Range(0, 8).iterable.toList()) {
+      for (var key in (from: 0, to: 8).iterable) {
         if (key == 0) continue;
         fishes[key - 1] = fishes[key] ?? 0;
       }
@@ -41,4 +42,3 @@ class Day06 extends GenericDay {
     return computeFishPopulation(initialFishes, 256);
   }
 }
-

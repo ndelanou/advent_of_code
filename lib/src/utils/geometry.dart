@@ -13,7 +13,7 @@ class Segment {
     final yDiff = start.y - end.y;
     final maxDiff = max(xDiff.abs(), yDiff.abs());
 
-    final iterationRange = Range(0, maxDiff).iterable;
+    final iterationRange = (from: 0, to: maxDiff).iterable;
     return iterationRange.map((i) {
       return Position(
         start.x + (-xDiff * i / maxDiff).round(),

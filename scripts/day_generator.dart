@@ -46,12 +46,12 @@ Future<void> createDay({required String dayNumber, required String year}) async 
     File('lib/src/$year/$dayFileName').writeAsString(dayTemplate(year, dayNumber)),
   );
 
-  final exportFile = File('lib/src/$year/$year.dart');
-  final lines = exportFile.readAsLinesSync();
-  String content = "export \'$dayFileName\';\n";
+  // final exportFile = File('lib/src/$year/$year.dart');
+  // final lines = exportFile.readAsLinesSync();
+  // String content = "export \'$dayFileName\';\n";
 
   // check if line already exists
-  bool found = lines.any((line) => line.contains(dayFileName));
+  // bool found = lines.any((line) => line.contains(dayFileName));
 
   // export new day in index file if not present
   // if (!found) {

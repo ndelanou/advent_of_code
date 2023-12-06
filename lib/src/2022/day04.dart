@@ -11,13 +11,17 @@ class Day04 extends GenericDay {
   @override
   solvePart1() {
     final lines = parseInput();
-    
+
     int contained = 0;
-  
-    final pairs = lines.map((l) => l.split(',').map((r) {
-    final range = r.split('-').map((b) => int.parse(b));
-      return Range.fromList(range);
-    }));
+
+    final pairs = lines.map(
+      (l) => l.split(',').map(
+        (r) {
+          final range = r.split('-').map((b) => int.parse(b));
+          return (from: range.first, to: range.last);
+        },
+      ),
+    );
 
     for (var pair in pairs) {
       final r1 = pair.elementAt(0);
@@ -32,13 +36,17 @@ class Day04 extends GenericDay {
   @override
   solvePart2() {
     final lines = parseInput();
-    
+
     int overlaps = 0;
-    
-    final pairs = lines.map((l) => l.split(',').map((r) {
-      final range = r.split('-').map((b) => int.parse(b));
-      return Range.fromList(range);
-    }));
+
+    final pairs = lines.map(
+      (l) => l.split(',').map(
+        (r) {
+          final range = r.split('-').map((b) => int.parse(b));
+          return (from: range.first, to: range.last);
+        },
+      ),
+    );
 
     for (var pair in pairs) {
       final r1 = pair.elementAt(0);

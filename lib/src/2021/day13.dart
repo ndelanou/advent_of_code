@@ -72,7 +72,7 @@ void printPoints(Set<Pos> points) {
   final maxY = points.map((p) => p.y).max;
 
   for (var y = 0; y <= maxY; y++) {
-    print(Range(0, maxX).iterable.map((x) => points.contains(Pos(x, y)) ? '#' : ' ').join());
+    print((from: 0, to: maxX).iterable.map((x) => points.contains(Pos(x, y)) ? '#' : ' ').join());
   }
 }
 
