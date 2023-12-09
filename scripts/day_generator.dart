@@ -102,5 +102,8 @@ class Day$dayNumber extends GenericDay {
   }
 }
 
+void main() {
+  Day$dayNumber().printSolutions();
+}
 ''';
 }
