@@ -129,6 +129,14 @@ class Grid<T> {
     }
     return result;
   }
+
+  Grid<T> transpose() {
+    final newGrid = List<List<T>>.generate(
+      width,
+      (y) => List<T>.generate(height, (x) => grid[x][y]),
+    );
+    return Grid<T>(newGrid);
+  }
 }
 
 /// Extension for [Grid]s where [T] is of type [num].
